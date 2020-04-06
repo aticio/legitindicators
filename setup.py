@@ -22,6 +22,7 @@ setup(
             "pytest>=3.7",
         ],
     },
+    url="https://github.com/aticio/legitindicators",
     author="Özgür Atıcı",
     author_email="aticiozgur@gmail.com",
 )
