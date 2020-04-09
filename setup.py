@@ -7,7 +7,7 @@ setup(
     name="legitindicators",
     version="0.0.5",
     description="Legit indicators to be used in trading strategies.",
-    py_modules=["atr", "ema", "rma", "roofingfilter", "supersmoother", "szladx", "truerange"],
+    py_modules=["legitindicators"],
     package_dir={"": "src"},
     classifiers=[
         "Programming Language :: Python :: 3",
