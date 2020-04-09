@@ -5,7 +5,7 @@ with open("README.md","r") as fh:
 
 setup(
     name="legitindicators",
-    version="0.0.5",
+    version="0.0.6",
     description="Legit indicators to be used in trading strategies.",
     py_modules=["legitindicators"],
     package_dir={"": "src"},
