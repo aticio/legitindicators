@@ -7,7 +7,7 @@ setup(
     name="legitindicators",
     version="0.0.11",
     description="Legit indicators to be used in trading strategies.",
-    package_dir=["": "src"]
+    package_dir={"": "src"},
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
