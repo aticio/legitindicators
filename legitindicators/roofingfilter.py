@@ -1,5 +1,5 @@
 import math
-from src.supersmoother import superSmoother
+from legitindicators.supersmoother import superSmoother
 
 def roofingFilter(data, hpLength, ssLength):
     """Python implementation of the Roofing Filter indicator created by John Ehlers

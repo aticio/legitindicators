@@ -1,5 +1,5 @@
 import math
-from src.supersmoother import superSmoother
+from legitindicators.supersmoother import superSmoother
 
 def szladx(data, length, treshold):
     """A low lagging upgrade of ADX indicator.

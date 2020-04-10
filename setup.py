@@ -1,13 +1,13 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 with open("README.md","r") as fh:
     long_description = fh.read()
 
 setup(
     name="legitindicators",
-    version="0.0.8",
+    version="0.0.9",
     description="Legit indicators to be used in trading strategies.",
-    package_dir={"": "src"},
+    packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

@@ -1,5 +1,5 @@
-from src.truerange import trueRange
-from src.rma import rma
+from legitindicators.truerange import trueRange
+from legitindicators.rma import rma
 
 def atr(data, length):
     """Average True Range indicator
