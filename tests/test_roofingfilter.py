@@ -1,5 +1,5 @@
 import requests
-from src.roofingfilter import roofingFilter
+from src.legitindicators import roofingFilter
 
 BINANCE_URL = "https://api.binance.com/api/v3/klines"
 SYMBOL = "BTCUSDT"

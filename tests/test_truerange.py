@@ -1,5 +1,5 @@
 import requests
-from src.truerange import trueRange
+from src.legitindicators import trueRange
 
 BINANCE_URL = "https://api.binance.com/api/v3/klines"
 SYMBOL = "BTCUSDT"

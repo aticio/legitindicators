@@ -1,5 +1,5 @@
 import requests
-from src.rma import rma
+from src.legitindicators import rma
 
 BINANCE_URL = "https://api.binance.com/api/v3/klines"
 SYMBOL = "BTCUSDT"

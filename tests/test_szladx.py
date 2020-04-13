@@ -1,5 +1,5 @@
 import requests
-from src.szladx import szladx
+from src.legitindicators import szladx
 
 BINANCE_URL = "https://api.binance.com/api/v3/klines"
 SYMBOL = "BTCUSDT"
@@ -18,6 +18,6 @@ def test_szladx():
         hlc = [high[i], low[i], close[i]]
         inputData.append(hlc)
     
-    szladxData = szladx(inputData,14,20)
+    szladxData = szladx(inputData,14)
     print(szladxData)
     assert len(szladxData) == len(data)

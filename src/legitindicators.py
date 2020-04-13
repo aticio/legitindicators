@@ -125,7 +125,7 @@ def superSmoother(data, length):
             ssf.append(c1 * (data[i] + data[i-1]) / 2 + c2 * ssf[i-1] + c3 * ssf[i-2])
     return ssf
 
-def szladx(data, length, treshold):
+def szladx(data, length):
     """A low lagging upgrade of ADX indicator.
     
     Arguments:
