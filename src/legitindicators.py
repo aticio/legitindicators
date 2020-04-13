@@ -51,6 +51,34 @@ def rma(data, length):
             rma.append(alpha * data[i] + (1 - alpha) * rma[i - 1])
     return rma
 
+def atrpips(data, length):
+    """Average True Range indicator in pips
+    
+    Arguments:
+        data {list} -- List of ohlc data [open, high, low, close]
+        length {int} -- Lookback period for atr indicator
+    
+    Returns:
+        list -- ATR (in pips) of given ohlc data
+    """
+    atrpips = []
+    a = atr(data,length)
+    close = [d[3] for d in data]
+    
+    for i in range(0,len(a)):
+        lclose = int(close[i])
+        rclose = close[i] - lclose
+        ldigits = 0
+        if lclose == 0:
+            ldigits = 1
+        else:
+            ldigits = int(math.log10(lclose))+1
+        rdigits = 5 - ldigits
+        atrpip = a[i] * pow(10, rdigits)
+        atrpips.append(atrpip)
+
+    return atrpips
+
 def roofingFilter(data, hpLength, ssLength):
     """Python implementation of the Roofing Filter indicator created by John Ehlers
     

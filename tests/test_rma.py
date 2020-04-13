@@ -12,4 +12,4 @@ def test_rma():
     close = [float(d[4]) for d in data]
     r = rma(close,10)
     print(r)
-    assert len(r) == len(r)
+    assert len(r) == len(close)

@@ -12,4 +12,4 @@ def test_ema():
     close = [float(d[4]) for d in data]
     exp = ema(close,10)
     print(exp)
-    assert len(exp) == len(exp)
+    assert len(exp) == len(close)

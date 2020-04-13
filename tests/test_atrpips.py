@@ -1,12 +1,12 @@
 import requests
-from src.legitindicators import atr
+from src.legitindicators import atrpips
 
 BINANCE_URL = "https://api.binance.com/api/v3/klines"
-SYMBOL = "BTCUSDT"
+SYMBOL = "LTCUSDT"
 INTERVAL = "1h"
 PARAMS = {"symbol":SYMBOL, "interval":INTERVAL}
 
-def test_atr():
+def test_atrpips():
     response = requests.get(url = BINANCE_URL, params = PARAMS)
     data = response.json()
     open = [float(o[1]) for o in data]
@@ -18,6 +18,6 @@ def test_atr():
     for i in range(0,len(data)):
         ohlc = [open[i], high[i], low[i], close[i]]
         inputData.append(ohlc)
-    a = atr(inputData,14)
-    print(close)
-    assert len(a) == len(close)
+    ap = atrpips(inputData,14)
+    print(ap)
+    assert len(ap) == len(close)
