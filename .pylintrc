@@ -1,0 +1,7 @@
+[MASTER]
+ignore=test_atr.py,test_atrpips.py,test_ema.py,test_rma.py,test_roofingfilter.py,test_supersmoother.py,test_szladx.py,test_truerange.py,setup.py
+
+[FORMAT]
+
+# Maximum number of characters on a single line.
+max-line-length=200

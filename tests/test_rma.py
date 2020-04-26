@@ -7,9 +7,9 @@ INTERVAL = "1h"
 PARAMS = {"symbol":SYMBOL, "interval":INTERVAL}
 
 def test_rma():
-    response = requests.get(url = BINANCE_URL, params = PARAMS)
+    response = requests.get(url=BINANCE_URL, params=PARAMS)
     data = response.json()
     close = [float(d[4]) for d in data]
-    r = rma(close,10)
-    print(r)
-    assert len(r) == len(close)
+    romoav = rma(close,10)
+    print(romoav)
+    assert len(romoav) == len(close)

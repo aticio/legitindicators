@@ -1,211 +1,210 @@
-import numpy as np
+"""legitindicators"""
 import math
+import numpy as np
 
 def ema(data, length):
     """Exponential Moving Average
-    
+
     Arguments:
         data {list} -- List of price data
         length {int} -- Lookback period for ema
-    
+
     Returns:
         list -- EMA of given data
     """
     weights = np.exp(np.linspace(-1., .0, length))
     weights /= weights.sum()
 
-    a = np.convolve(data, weights, mode="full")[:len(data)]
-    a[:length] = a[length]
-    return a
+    res = np.convolve(data, weights, mode="full")[:len(data)]
+    res[:length] = res[length]
+    return res
 
 def atr(data, length):
     """Average True Range indicator
-    
+
     Arguments:
         data {list} -- List of ohlc data [open, high, low, close]
         length {int} -- Lookback period for atr indicator
-    
+
     Returns:
         list -- ATR of given ohlc data
     """
-    tr = trueRange(data)
-    a = rma(tr, length)
-    return a
+    trng = true_range(data)
+    res = rma(trng, length)
+    return res
 
 def rma(data, length):
     """Rolled moving average
-    
+
     Arguments:
         data {list} -- List of price data
         length {int} -- Lookback period for rma
-    
+
     Returns:
         list -- RMA of given data
     """
     alpha = 1 / length
-    rma = []
-    for i in range(0, len(data)):
+    romoav = []
+    for i, _ in enumerate(data):
         if i < 1:
-            rma.append(0)
+            romoav.append(0)
         else:
-            rma.append(alpha * data[i] + (1 - alpha) * rma[i - 1])
-    return rma
+            romoav.append(alpha * data[i] + (1 - alpha) * romoav[i - 1])
+    return romoav
 
 def atrpips(data, length):
     """Average True Range indicator in pips
-    
+
     Arguments:
         data {list} -- List of ohlc data [open, high, low, close]
         length {int} -- Lookback period for atr indicator
-    
+
     Returns:
         list -- ATR (in pips) of given ohlc data
     """
-    atrpips = []
-    a = atr(data,length)
+    atr_pips = []
+    avtr = atr(data, length)
     close = [d[3] for d in data]
-    
-    for i in range(0,len(a)):
+
+    for i, _ in enumerate(avtr):
         lclose = int(close[i])
-        rclose = close[i] - lclose
         ldigits = 0
         if lclose == 0:
             ldigits = 1
         else:
             ldigits = int(math.log10(lclose))+1
         rdigits = 5 - ldigits
-        atrpip = a[i] * pow(10, rdigits)
-        atrpips.append(atrpip)
+        atrpip = avtr[i] * pow(10, rdigits)
+        atr_pips.append(atrpip)
 
-    return atrpips
+    return atr_pips
 
-def roofingFilter(data, hpLength, ssLength):
+def roofing_filter(data, hp_length, ss_length):
     """Python implementation of the Roofing Filter indicator created by John Ehlers
-    
+
     Arguments:
         data {list} -- list of price data
         hpLength {int} -- High Pass filter length
         ssLength {int} -- period for super smoother
-    
+
     Returns:
         list -- roofin filter applied data
     """
-    hp = []
+    hpf = []
 
-    for i in range(0, len(data)):
+    for i, _ in enumerate(data):
         if i < 2:
-            hp.append(0)
+            hpf.append(0)
         else:
-            alphaArg = 2 * 3.14159 / (hpLength * 1.414)
-            alpha1 = (math.cos(alphaArg) + math.sin(alphaArg) - 1) / math.cos(alphaArg)
-            hp.append(math.pow(1.0-alpha1/2.0, 2)*(data[i]-2*data[i-1]+data[i-2]) + 2*(1-alpha1)*hp[i-1] - math.pow(1-alpha1, 2)*hp[i-2])
-    return superSmoother(hp,ssLength)
+            alpha_arg = 2 * 3.14159 / (hp_length * 1.414)
+            alpha1 = (math.cos(alpha_arg) + math.sin(alpha_arg) - 1) / math.cos(alpha_arg)
+            hpf.append(math.pow(1.0-alpha1/2.0, 2)*(data[i]-2*data[i-1]+data[i-2]) + 2*(1-alpha1)*hpf[i-1] - math.pow(1-alpha1, 2)*hpf[i-2])
+    return super_smoother(hpf, ss_length)
 
-def superSmoother(data, length):
-    """Python implementation of the Super Smoother indicator created by John Ehlers 
-    
+def super_smoother(data, length):
+    """Python implementation of the Super Smoother indicator created by John Ehlers
+
     Arguments:
-        data {list} -- list of price data 
+        data {list} -- list of price data
         length {int} -- period
-    
+
     Returns:
         list -- super smoothed price data
     """
     ssf = []
-    for i in range(0, len(data)):
+    for i, _ in enumerate(data):
         if i < 2:
             ssf.append(0)
         else:
             arg = 1.414 * 3.14159 / length
-            a1 = math.exp(-arg)
-            b1 = 2 * a1 * math.cos(4.44/float(length))
-            c2 = b1
-            c3 = -a1 * a1
-            c1 = 1 - c2 - c3
-            ssf.append(c1 * (data[i] + data[i-1]) / 2 + c2 * ssf[i-1] + c3 * ssf[i-2])
+            a_1 = math.exp(-arg)
+            b_1 = 2 * a_1 * math.cos(4.44/float(length))
+            c_2 = b_1
+            c_3 = -a_1 * a_1
+            c_1 = 1 - c_2 - c_3
+            ssf.append(c_1 * (data[i] + data[i-1]) / 2 + c_2 * ssf[i-1] + c_3 * ssf[i-2])
     return ssf
 
 def szladx(data, length):
     """A low lagging upgrade of ADX indicator.
-    
+
     Arguments:
         data {list} -- list data consists of [high, low, close]
         length {int} -- lookback period of adx
         treshold {int} -- threshold line for adx
-    
+
     Returns:
         [list] -- list of low lag adx indicator data
     """
     lag = (length - 1) / 2
     ssf = []
-    smoothedTrueRange = []
-    smoothedDirectionalMovementPlus = []
-    smoothedDirectionalMovementMinus = []
-    dx = []
+    smoothed_true_range = []
+    smoothed_directional_movement_plus = []
+    smoothed_directional_movement_minus = []
+    dxi = []
     szladxi = []
 
-    for i in range(0, len(data)):
+    for i, _ in enumerate(data):
         if i < round(lag):
             ssf.append(1)
-            smoothedTrueRange.append(1)
-            smoothedDirectionalMovementMinus.append(1)
-            smoothedDirectionalMovementPlus.append(1)
-            dx.append(1)
+            smoothed_true_range.append(1)
+            smoothed_directional_movement_minus.append(1)
+            smoothed_directional_movement_plus.append(1)
+            dxi.append(1)
             szladxi.append(1)
         else:
             high = data[i][0]
             high1 = data[i-1][0]
             low = data[i][1]
             low1 = data[i-1][1]
-            close = data[i][2]
             close1 = data[i-1][2]
 
-            trueRange = max(max(high - low, abs(high - close1)), abs(low - close1))
+            trng = max(max(high - low, abs(high - close1)), abs(low - close1))
             if high - high1 > low1 - low:
-                directionalMovementPlus = max(high - high1, 0)
+                directional_movement_plus = max(high - high1, 0)
             else:
-                directionalMovementPlus = 0
+                directional_movement_plus = 0
 
             if low1 - low > high - high1:
-                directionalMovementMinus = max(low1 - low, 0)
+                directional_movement_minus = max(low1 - low, 0)
             else:
-                directionalMovementMinus = 0
+                directional_movement_minus = 0
 
-            smoothedTrueRange.append(smoothedTrueRange[i-1] - (smoothedTrueRange[i-1] / length) + trueRange)
-            smoothedDirectionalMovementPlus.append(smoothedDirectionalMovementPlus[i-1] - (smoothedDirectionalMovementPlus[i-1] / length) + directionalMovementPlus)
-            smoothedDirectionalMovementMinus.append(smoothedDirectionalMovementMinus[i-1] - (smoothedDirectionalMovementMinus[i-1]/ length) + directionalMovementMinus) 
-            
-            diPlus = smoothedDirectionalMovementPlus[i] / smoothedTrueRange[i] * 100
-            diMinus = smoothedDirectionalMovementMinus[i] / smoothedTrueRange[i] * 100
-            dx.append(abs(diPlus - diMinus) / (diPlus+diMinus) * 100)
-            
-            szladxi.append(dx[i] + (dx[i] - dx[i-round(lag)]))
-    
-    ssf = superSmoother(szladxi,10)
+            smoothed_true_range.append(smoothed_true_range[i-1] - (smoothed_true_range[i-1] / length) + trng)
+            smoothed_directional_movement_plus.append(smoothed_directional_movement_plus[i-1] - (smoothed_directional_movement_plus[i-1] / length) + directional_movement_plus)
+            smoothed_directional_movement_minus.append(smoothed_directional_movement_minus[i-1] - (smoothed_directional_movement_minus[i-1]/ length) + directional_movement_minus)
+
+            di_plus = smoothed_directional_movement_plus[i] / smoothed_true_range[i] * 100
+            di_minus = smoothed_directional_movement_minus[i] / smoothed_true_range[i] * 100
+            dxi.append(abs(di_plus - di_minus) / (di_plus + di_minus) * 100)
+
+            szladxi.append(dxi[i] + (dxi[i] - dxi[i-round(lag)]))
+
+    ssf = super_smoother(szladxi, 10)
     return ssf
 
-def trueRange(data):
+def true_range(data):
     """True range
-    
+
     Arguments:
         data {list} -- List of ohlc data [open, high, low, close]
-    
+
     Returns:
         list -- True range of given data
     """
-    tr = []
-    for i in range(0,len(data)):
+    trng = []
+    for i, _ in enumerate(data):
         if i < 1:
-            tr.append(0)
+            trng.append(0)
         else:
-            x = data[i][1] - data[i][2]
-            y = abs(data[i][1] - data[i-1][3])
-            z = abs(data[i][2] - data[i-1][3])
+            val1 = data[i][1] - data[i][2]
+            val2 = abs(data[i][1] - data[i-1][3])
+            val3 = abs(data[i][2] - data[i-1][3])
 
-            if y <= x >= z:
-                tr.append(x)
-            elif x <= y >= z:
-                tr.append(y)
-            elif x <= z >= y:
-                tr.append(z)
-    return tr
+            if val2 <= val1 >= val3:
+                trng.append(val1)
+            elif val1 <= val2 >= val3:
+                trng.append(val2)
+            elif val1 <= val3 >= val2:
+                trng.append(val3)
+    return trng

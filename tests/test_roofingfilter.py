@@ -1,5 +1,5 @@
 import requests
-from src.legitindicators import roofingFilter
+from src.legitindicators import roofing_filter
 
 BINANCE_URL = "https://api.binance.com/api/v3/klines"
 SYMBOL = "BTCUSDT"
@@ -7,9 +7,9 @@ INTERVAL = "1h"
 PARAMS = {"symbol":SYMBOL, "interval":INTERVAL}
 
 def test_roofingfilter():
-    response = requests.get(url = BINANCE_URL, params = PARAMS)
+    response = requests.get(url=BINANCE_URL, params=PARAMS)
     data = response.json()
     close = [float(d[4]) for d in data]
-    rf = roofingFilter(close,45,30)
-    print(rf)
-    assert len(rf) == len(close)
+    r_f = roofing_filter(close, 45, 30)
+    print(r_f)
+    assert len(r_f) == len(close)
