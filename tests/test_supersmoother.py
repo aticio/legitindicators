@@ -1,5 +1,5 @@
 import requests
-from ..legitindicators import super_smoother
+from src.legitindicators import super_smoother
 
 BINANCE_URL = "https://api.binance.com/api/v3/klines"
 SYMBOL = "BTCUSDT"
