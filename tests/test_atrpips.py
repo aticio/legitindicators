@@ -1,5 +1,5 @@
 import requests
-from src.legitindicators import atrpips
+from ..legitindicators import atrpips
 
 BINANCE_URL = "https://api.binance.com/api/v3/klines"
 SYMBOL = "BTCUSDT"

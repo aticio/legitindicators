@@ -1,5 +1,5 @@
 import requests
-from src.legitindicators import szladx
+from ..legitindicators import szladx
 
 BINANCE_URL = "https://api.binance.com/api/v3/klines"
 SYMBOL = "BTCUSDT"
