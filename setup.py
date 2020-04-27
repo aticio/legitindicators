@@ -7,8 +7,8 @@ setup(
     name="legitindicators",
     version="0.0.21",
     description="Legit indicators to be used in trading strategies.",
-    package_dir={"": "src"},
     packages=find_packages(),
+    package_dir={"": "src"},
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
