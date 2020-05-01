@@ -74,6 +74,8 @@ def atrpips(data, length):
         else:
             ldigits = int(math.log10(lclose))+1
         rdigits = 5 - ldigits
+        if rdigits == 0:
+            rdigits = 1
         atrpip = avtr[i] * pow(10, rdigits)
         atr_pips.append(atrpip)
 
