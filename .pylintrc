@@ -1,5 +1,5 @@
 [MASTER]
-ignore=test_atr.py,test_atrpips.py,test_ema.py,test_rma.py,test_roofingfilter.py,test_supersmoother.py,test_szladx.py,test_truerange.py,setup.py
+ignore=test_atr.py,test_atrpips.py,test_ema.py,test_rma.py,test_roofingfilter.py,test_supersmoother.py,test_szladx.py,test_truerange.py,test_decycler.py,setup.py
 
 [FORMAT]
 

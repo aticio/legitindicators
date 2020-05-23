@@ -3,7 +3,7 @@ from legitindicators import atrpips
 
 BINANCE_URL = "https://api.binance.com/api/v3/klines"
 SYMBOL = "BTCUSDT"
-INTERVAL = "1h"
+INTERVAL = "5m"
 PARAMS = {"symbol":SYMBOL, "interval":INTERVAL}
 
 def test_atrpips():

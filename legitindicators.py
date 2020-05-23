@@ -86,8 +86,8 @@ def roofing_filter(data, hp_length, ss_length):
 
     Arguments:
         data {list} -- list of price data
-        hpLength {int} -- High Pass filter length
-        ssLength {int} -- period for super smoother
+        hp_length {int} -- High Pass filter length
+        ss_length {int} -- period for super smoother
 
     Returns:
         list -- roofin filter applied data
@@ -210,3 +210,29 @@ def true_range(data):
             elif val1 <= val3 >= val2:
                 trng.append(val3)
     return trng
+
+def decycler(data, hp_length):
+    """Python implementation of the Roofing Filter indicator created by John Ehlers
+
+    Arguments:
+        data {list} -- list of price data
+        hp_length {int} -- high Pass filter length
+
+    Returns:
+        list -- Decycler applied price data
+    """
+    hpf = []
+
+    for i, _ in enumerate(data):
+        if i < 2:
+            hpf.append(0)
+        else:
+            alpha_arg = 2 * 3.14159 / (hp_length * 1.414)
+            alpha1 = (math.cos(alpha_arg) + math.sin(alpha_arg) - 1) / math.cos(alpha_arg)
+            hpf.append(math.pow(1.0-alpha1/2.0, 2)*(data[i]-2*data[i-1]+data[i-2]) + 2*(1-alpha1)*hpf[i-1] - math.pow(1-alpha1, 2)*hpf[i-2])
+
+    dec = []
+    for i, _ in enumerate(data):
+        dec.append(data[i] - hpf[i])
+
+    return dec
