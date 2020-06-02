@@ -212,7 +212,7 @@ def true_range(data):
     return trng
 
 def decycler(data, hp_length):
-    """Python implementation of the Roofing Filter indicator created by John Ehlers
+    """Python implementation of Simple Decycler indicator created by John Ehlers
 
     Arguments:
         data {list} -- list of price data
@@ -236,3 +236,64 @@ def decycler(data, hp_length):
         dec.append(data[i] - hpf[i])
 
     return dec
+
+def decycler_oscillator(data, hp_length, k_multiplier, hp_length2, k_multiplier2):
+    """Python implementation of Decycler Oscillator created by John Ehlers
+
+    Arguments:
+        data {list} -- list of price data
+        hp_length {int} -- high pass length for first filter
+        k_multiplier {float} -- multiplier for first filter
+        hp_length2 {int} -- high pass length for second filter
+        k_multiplier2 {float} -- multiplier for second filter
+
+    Returns:
+        list -- Decycler oscillator data
+    """
+    hpf = high_pass_filter(data, hp_length, 1)
+
+    dec = []
+    for i, _ in enumerate(data):
+        dec.append(data[i] - hpf[i])
+
+    decosc = []
+    dec_hp = high_pass_filter(dec, hp_length, 0.5)
+    for i, _ in enumerate(data):
+        decosc.append(100 * k_multiplier * dec_hp[i] / data[i])
+
+    hpf2 = high_pass_filter(data, hp_length2, 1)
+
+    dec2 = []
+    for i, _ in enumerate(data):
+        dec2.append(data[i] - hpf2[i])
+
+    decosc2 = []
+    dec_hp2 = high_pass_filter(dec2, hp_length2, 0.5)
+    for i, _ in enumerate(data):
+        decosc2.append(100 * k_multiplier2 * dec_hp2[i] / data[i])
+
+    return decosc, decosc2
+
+
+def high_pass_filter(data, hp_length, multiplier):
+    """Applies high pass filter to given data
+
+    Arguments:
+        data {list} -- list of price data
+        hp_length {int} -- high pass length
+        multiplier {float} -- multiplier
+
+    Returns:
+        list -- high pass filter applied price data
+    """
+    hpf = []
+
+    for i, _ in enumerate(data):
+        if i < 2:
+            hpf.append(0)
+        else:
+            alpha_arg = 2 * 3.14159 / (multiplier * hp_length * 1.414)
+            alpha1 = (math.cos(alpha_arg) + math.sin(alpha_arg) - 1) / math.cos(alpha_arg)
+            hpf.append(math.pow(1.0-alpha1/2.0, 2)*(data[i]-2*data[i-1]+data[i-2]) + 2*(1-alpha1)*hpf[i-1] - math.pow(1-alpha1, 2)*hpf[i-2])
+
+    return hpf
