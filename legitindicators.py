@@ -272,43 +272,6 @@ def decycler_oscillator(data, hp_length, k_multiplier, hp_length2, k_multiplier2
     for i, _ in enumerate(data):
         decosc2.append(100 * k_multiplier2 * dec_hp2[i] / data[i])
 
-    return decosc, decosc2
-
-def decycler_oscillator_v2(data, hp_length, k_multiplier, hp_length2, k_multiplier2):
-    """Python implementation of Decycler Oscillator created by John Ehlers
-
-    Arguments:
-        data {list} -- list of price data
-        hp_length {int} -- high pass length for first filter
-        k_multiplier {float} -- multiplier for first filter
-        hp_length2 {int} -- high pass length for second filter
-        k_multiplier2 {float} -- multiplier for second filter
-
-    Returns:
-        list -- Decycler oscillator data
-    """
-    hpf = high_pass_filter(data, hp_length, 1)
-
-    dec = []
-    for i, _ in enumerate(data):
-        dec.append(data[i] - hpf[i])
-
-    decosc = []
-    dec_hp = high_pass_filter(dec, hp_length, 0.5)
-    for i, _ in enumerate(data):
-        decosc.append(100 * k_multiplier * dec_hp[i] / data[i])
-
-    hpf2 = high_pass_filter(data, hp_length2, 1)
-
-    dec2 = []
-    for i, _ in enumerate(data):
-        dec2.append(data[i] - hpf2[i])
-
-    decosc2 = []
-    dec_hp2 = high_pass_filter(dec2, hp_length2, 0.5)
-    for i, _ in enumerate(data):
-        decosc2.append(100 * k_multiplier2 * dec_hp2[i] / data[i])
-
     decosc_final = []
     for i, _ in enumerate(decosc):
         decosc_final.append(decosc2[i] - decosc[i])

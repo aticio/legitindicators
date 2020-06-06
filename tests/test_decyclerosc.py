@@ -10,6 +10,6 @@ def test_decycler_oscillator():
     response = requests.get(url=BINANCE_URL, params=PARAMS)
     data = response.json()
     close = [float(d[4]) for d in data]
-    decosc, decosc2 = decycler_oscillator(close, 75, 1, 100, 1.2)
-    print(decosc[-2], decosc2[-2])
+    decosc= decycler_oscillator(close, 75, 1, 100, 1.2)
+    print(decosc[-2])
     assert len(decosc) == len(close)
