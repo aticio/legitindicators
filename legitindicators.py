@@ -185,66 +185,6 @@ def szladx(data, length):
     ssf = super_smoother(szladxi, 10)
     return ssf
 
-def szladx_v2(data, length):
-    """A low lagging upgrade of ADX indicator.
-
-    Arguments:
-        data {list} -- list data consists of [high, low, close]
-        length {int} -- lookback period of adx
-        treshold {int} -- threshold line for adx
-
-    Returns:
-        [list] -- list of low lag adx indicator data
-    """
-    lag = (length - 1) / 2
-    ssf = []
-
-    trngs = []
-    dmp = []
-    dmm = []
-
-    dxi = []
-    szladxi = []
-
-    for i, _ in enumerate(data):
-        high = data[i][0]
-        high1 = data[i-1][0]
-        low = data[i][1]
-        low1 = data[i-1][1]
-        close1 = data[i-1][2]
-
-        trng = max(max(high - low, abs(high - close1)), abs(low - close1))
-        if high - high1 > low1 - low:
-            directional_movement_plus = max(high - high1, 0)
-        else:
-            directional_movement_plus = 0
-
-        if low1 - low > high - high1:
-            directional_movement_minus = max(low1 - low, 0)
-        else:
-            directional_movement_minus = 0
-
-        trngs.append(trng)
-        dmp.append(directional_movement_plus)
-        dmm.append(directional_movement_minus)
-
-    smoothed_true_range = super_smoother(trngs, 10)
-    smoothed_directional_movement_plus = super_smoother(dmp, 10)
-    smoothed_directional_movement_minus = super_smoother(dmm, 10)
-
-    for i, _ in enumerate(smoothed_true_range):
-        if i < round(lag):
-            dxi.append(1)
-            szladxi.append(1)
-        else:
-            di_plus = smoothed_directional_movement_plus[i] / smoothed_true_range[i] * 100
-            di_minus = smoothed_directional_movement_minus[i] / smoothed_true_range[i] * 100
-            dxi.append(abs(di_plus - di_minus) / (di_plus + di_minus) * 100)
-            szladxi.append(dxi[i] + (dxi[i] - dxi[i-round(lag)]))
-
-    ssf = super_smoother(szladxi, 10)
-    return ssf
-
 def true_range(data):
     """True range
 
@@ -357,7 +297,7 @@ def decycler_oscillator_v3(data, hp_length1, hp_length2):
     dec = []
     for i, _ in enumerate(data):
         dec.append(hpf2[i] - hpf[i])
-    
+
     return dec
 
 def high_pass_filter(data, hp_length, multiplier):
