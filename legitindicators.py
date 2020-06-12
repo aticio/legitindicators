@@ -1,5 +1,6 @@
 """legitindicators"""
 import math
+import statistics
 import numpy as np
 
 def ema(data, length):
@@ -322,3 +323,41 @@ def high_pass_filter(data, hp_length, multiplier):
             hpf.append(math.pow(1.0-alpha1/2.0, 2)*(data[i]-2*data[i-1]+data[i-2]) + 2*(1-alpha1)*hpf[i-1] - math.pow(1-alpha1, 2)*hpf[i-2])
 
     return hpf
+
+def damiani_volatmeter(data, vis_atr, vis_std, sed_atr, sed_std, threshold):
+    """Ptyhon implementation of Damiani Volatmeter
+
+    Args:
+        data (list): List of ohlc data [open, high, low, close]
+        vis_atr (int): atr length of viscosity
+        vis_std (int): std length of viscosity
+        sed_atr (int): atr length of sedimentation
+        sed_std (int): std length of sedimentation
+        threshold (float): threshold
+
+    Returns:
+        list: list of damiani volatmeter data
+    """
+    lag_s = 0.5
+
+    vol = []
+    vol_m = []
+
+    close = [float(c[3]) for c in data]
+
+    atrvis = atr(data, vis_atr)
+    atrsed = atr(data, sed_atr)
+    for i, _ in enumerate(data):
+        if i < sed_std:
+            vol.append(0)
+            vol_m.append(0)
+        else:
+            vol.append(atrvis[i] / atrsed[i] + lag_s * (vol[i - 1] - vol[i - 3]))
+            anti_thres = np.std(close[i - vis_std:i]) / np.std(close[i-sed_std:i])
+            t = threshold - anti_thres
+            if vol[i] > t:
+                vol_m.append(1)
+            else:
+                vol_m.append(0)
+
+    return vol_m
