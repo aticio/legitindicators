@@ -365,6 +365,7 @@ def damiani_volatmeter(data, vis_atr, vis_std, sed_atr, sed_std, threshold):
 def voss(data, period, predict, bandwith):
     voss = []
     filt = []
+    vf = []
     sumcs = []
 
     pi = 3.14159
@@ -389,5 +390,7 @@ def voss(data, period, predict, bandwith):
                 sumc = sumc + ((count + 1) / float(order)) * voss[i - (order - count)]
 
             voss.append(((3 + order) / 2) * filt[i] - sumc)
-
-    return voss, filt
+    
+    for i, _ in enumerate(data):
+        vf.append(voss[i] - filt[i])
+    return vf

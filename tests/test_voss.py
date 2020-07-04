@@ -10,6 +10,6 @@ def test_voss():
     response = requests.get(url=BINANCE_URL, params=PARAMS)
     data = response.json()
     close = [float(d[4]) for d in data]
-    v, f = voss(close, 20, 3, 0.25)
-    print(v[-2], f[-2])
-    assert len(v) == len(close)
+    vf = voss(close, 20, 3, 0.25)
+    print(vf)
+    assert len(vf) == len(close)
