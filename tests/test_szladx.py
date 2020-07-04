@@ -19,5 +19,5 @@ def test_szladx():
         input_data.append(hlc)
 
     szladx_data = szladx(input_data, 14)
-    print(szladx_data)
+    print(data[-1][0],szladx_data[-1])
     assert len(szladx_data) == len(data)
