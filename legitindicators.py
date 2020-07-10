@@ -1,6 +1,5 @@
 """legitindicators"""
 import math
-import statistics
 import numpy as np
 
 def ema(data, length):
@@ -279,28 +278,6 @@ def decycler_oscillator(data, hp_length, k_multiplier, hp_length2, k_multiplier2
 
     return decosc_final
 
-def decycler_oscillator_v3(data, hp_length1, hp_length2):
-    """Python implementation of Decycler Oscillator created by John Ehlers
-
-    Arguments:
-        data {list} -- list of price data
-        hp_length {int} -- high pass length for first filter
-        k_multiplier {float} -- multiplier for first filter
-        hp_length2 {int} -- high pass length for second filter
-        k_multiplier2 {float} -- multiplier for second filter
-
-    Returns:
-        list -- Decycler oscillator data
-    """
-    hpf = high_pass_filter(data, hp_length1, 1)
-    hpf2 = high_pass_filter(data, hp_length2, 1)
-
-    dec = []
-    for i, _ in enumerate(data):
-        dec.append(hpf2[i] - hpf[i])
-
-    return dec
-
 def high_pass_filter(data, hp_length, multiplier):
     """Applies high pass filter to given data
 
@@ -363,6 +340,17 @@ def damiani_volatmeter(data, vis_atr, vis_std, sed_atr, sed_std, threshold):
     return vol_m
 
 def voss(data, period, predict, bandwith):
+    """Python implementation of Voss indicator created by John Ehlers
+
+    Arguments:
+        data {list} -- list of price data
+        period {int} -- period
+        predict {int} -- predict
+        bandwith {float} -- bandwith
+
+    Returns:
+        list -- Voss indicator data
+    """
     voss = []
     filt = []
     vf = []
@@ -390,7 +378,59 @@ def voss(data, period, predict, bandwith):
                 sumc = sumc + ((count + 1) / float(order)) * voss[i - (order - count)]
 
             voss.append(((3 + order) / 2) * filt[i] - sumc)
-    
+
     for i, _ in enumerate(data):
         vf.append(voss[i] - filt[i])
     return vf
+
+def hurst_coefficient(data, length):
+    dimen = []
+    hurst = []
+    n1 = []
+    n2 = []
+    n3 = []
+    ll = []
+    hh = []
+    half_length = math.ceil(length / 2)
+
+    for i, _ in enumerate(data):
+        if i < length:
+            dimen.append(0)
+            hurst.append(0)
+            n1.append(0)
+            n2.append(0)
+            n3.append(0)
+            ll.append(0)
+            hh.append(0)
+        else:
+            n3.append(round((max(data[i - length:i]) - min(data[i - length:i])) / length, 2))
+            hh.append(data[i-1])
+            ll.append(data[i-1])
+
+            for t in range(half_length):
+                price = data[i - t - 1]
+                if price > hh[-1]:
+                    hh[-1] = price
+                if price < ll[-1]:
+                    ll[-1] = price
+
+            n1.append(round((hh[-1] - ll[-1]) / half_length, 2))
+            hh[-1] = data[i - 1 - half_length]
+            ll[-1] = data[i - 1 - half_length]
+
+            for z in range(half_length, length):
+                price = data[i - z - 1]
+                if price > hh[-1]:
+                    hh[-1] = price
+                if price < ll[-1]:
+                    ll[-1] = price
+
+            n2.append(round((hh[-1] - ll[-1]) / half_length, 2))
+
+            if n1[-1] > 0 and n2[-1] > 0 and n3[-1] > 0:
+                dimen.append(round(0.5 * (((math.log(n1[-1] + n2[-1]) - math.log(n3[-1])) / math.log(2)) + dimen[i - 1]), 2))
+            else:
+                dimen.append(0)
+
+            hurst.append(round(2 - dimen[i], 2))
+    return super_smoother(hurst, 20)
