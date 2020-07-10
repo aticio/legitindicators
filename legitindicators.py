@@ -434,3 +434,16 @@ def hurst_coefficient(data, length):
 
             hurst.append(round(2 - dimen[i], 2))
     return super_smoother(hurst, 20)
+
+def kaufman_er(data, length):
+    ker = []
+    calc = []
+    for i, _ in enumerate(data):
+        if i < length:
+            ker.append(0)
+        else:
+            change = abs(data[i] - data[i - length])
+            calc.append(abs(data[i] - data[i - 1]))
+            volat = sum(calc[-length:])
+            ker.append(change / volat)
+    return ker
