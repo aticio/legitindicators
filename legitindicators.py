@@ -447,3 +447,31 @@ def kaufman_er(data, length):
             volat = sum(calc[-length:])
             ker.append(change / volat)
     return ker
+
+def ebsw(data, hp_length, ssf_length):
+    pi = 3.14159
+    alpha1 = (1 - math.sin(2 * pi / hp_length)) / math.cos(2 * pi / hp_length)
+
+    hpf = []
+
+    for i, _ in enumerate(data):
+        if i < hp_length:
+            hpf.append(0)
+        else:
+            hpf.append((0.5 * (1 + alpha1) * (data[i] - data[i - 1])) + (alpha1 * hpf[i - 1]))
+
+    ssf = super_smoother(hpf, ssf_length)
+
+    wave = []
+    for i, _ in enumerate(data):
+        if i < ssf_length:
+            wave.append(0)
+        else:
+            w = (ssf[i] + ssf[i - 1] + ssf[i - 2]) / 3
+            p = (pow(ssf[i], 2) + pow(ssf[i - 1], 2) + pow(ssf[i - 2], 2)) / 3
+            if p == 0:
+                wave.append(0)
+            else:
+                wave.append(w / math.sqrt(p))
+
+    return wave
