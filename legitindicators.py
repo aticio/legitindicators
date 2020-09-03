@@ -1,6 +1,7 @@
 """legitindicators"""
 import math
 import numpy as np
+from scipy.stats import linregress
 
 def ema(data, length):
     """Exponential Moving Average
@@ -475,3 +476,10 @@ def ebsw(data, hp_length, ssf_length):
                 wave.append(w / math.sqrt(p))
 
     return wave
+
+def cube_transform(data):
+    cube = []
+    for i, _ in enumerate(data):
+        c = data[i]**3
+        cube.append(c)
+    return cube
