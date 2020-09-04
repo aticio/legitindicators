@@ -1,7 +1,6 @@
 """legitindicators"""
 import math
 import numpy as np
-from scipy.stats import linregress
 
 def ema(data, length):
     """Exponential Moving Average
@@ -483,3 +482,78 @@ def cube_transform(data):
         c = data[i]**3
         cube.append(c)
     return cube
+
+def simple_harmonic_oscillator(data, length):
+    sho = []
+    vt = []
+    cy = []
+    vy = []
+    att = []
+    tt = []
+    ti = []
+    vp = []
+    tp = []
+
+    for i, _ in enumerate(data):
+        if i < length:
+            sho.append(0)
+            vt.append(0)
+            cy.append(0)
+            vy.append(0)
+            att.append(0)
+            tt.append(0)
+            ti.append(0)
+            vp.append(0)
+            tp.append(0)
+        else:
+            cy.append(data[i - 1])
+            vt.append(data[i] - cy[i])
+            vy.append(vt[i - 1])
+            att.append(vt[i] - vy[i])
+            em = ema(att, length)[-1]
+            tt.append(math.sqrt(abs(vt[i] / em)))
+
+            if data[i] > cy[i]:
+                ti.append(tt[i])
+            else:
+                ti.append(-tt[i])
+
+            vp.append(ema(ti, length)[-1])
+            tp.append(ema(tt, length)[-1])
+
+            sho.append(vp[i] / tp[i] * 100)
+    return sho
+
+def simple_harmonic_index(data, length):
+    shi = []
+    vt = []
+    cy = []
+    vy = []
+    att = []
+    tt = []
+    ti = []
+
+    for i, _ in enumerate(data):
+        if i < length:
+            shi.append(0)
+            vt.append(0)
+            cy.append(0)
+            vy.append(0)
+            att.append(0)
+            tt.append(0)
+            ti.append(0)
+        else:
+            cy.append(data[i - 1])
+            vt.append(data[i] - cy[i])
+            vy.append(vt[i - 1])
+            att.append(vt[i] - vy[i])
+            em = ema(att, length)[-1]
+            tt.append(math.sqrt(abs(vt[i] / em)))
+
+            if data[i] > cy[i]:
+                ti.append(tt[i])
+            else:
+                ti.append(-tt[i])
+            
+            shi.append(ema(ti,length)[-1])
+    return shi
