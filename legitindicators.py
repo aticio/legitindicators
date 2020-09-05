@@ -507,20 +507,6 @@ def cube_transform(data):
     return cube
 
 def simple_harmonic_oscillator(data, length):
-# sho(s)=>
-#     C = s
-#     Cy = C[1]
-#     Cby = C[2]
-#     Vt = C - Cy
-#     Vy = Cy - Cby
-#     At = Vt - Vy
-#     A = ema(At, len)
-#     T = 2 * pi * (sqrt(abs(Vt / A)))
-#     Ti = C > Cy ? T : T * -1
-#     VP = ema(Ti, len)
-#     TP = ema(T, len)
-#     SHO= (VP / TP) * 100
-
     pi = 3.14159
 
     sho = []
