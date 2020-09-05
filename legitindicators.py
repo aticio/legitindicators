@@ -2,6 +2,25 @@
 import math
 import numpy as np
 
+
+def sma(data, length):
+    """Simple Moving Average
+
+    Arguments:
+        data {list} -- List of price data
+        length {int} -- Lookback period for ema
+
+    Returns:
+        list -- SMA of given data
+    """ 
+    res = []
+    for i, _ in reversed(list(enumerate(data))):
+        sum = 0
+        for t in range(i - length + 1, i + 1):
+            sum = sum + data[t] / length
+        res.insert(0,sum)
+    return res
+
 def ema(data, length):
     """Exponential Moving Average
 
@@ -12,11 +31,15 @@ def ema(data, length):
     Returns:
         list -- EMA of given data
     """
-    weights = np.exp(np.linspace(-1., .0, length))
-    weights /= weights.sum()
-
-    res = np.convolve(data, weights, mode="full")[:len(data)]
-    res[:length] = res[length]
+    res = []
+    alpha = 2 / (length + 1)
+    for i, _ in enumerate(data):
+        if i < length:
+            res.append(1)
+        elif i == length:
+            res.append(sma(data[0:i], length)[-1])
+        else:
+            res.append(alpha * data[i] + (1 - alpha) * res[i - 1])
     return res
 
 def atr(data, length):
@@ -484,12 +507,30 @@ def cube_transform(data):
     return cube
 
 def simple_harmonic_oscillator(data, length):
+# sho(s)=>
+#     C = s
+#     Cy = C[1]
+#     Cby = C[2]
+#     Vt = C - Cy
+#     Vy = Cy - Cby
+#     At = Vt - Vy
+#     A = ema(At, len)
+#     T = 2 * pi * (sqrt(abs(Vt / A)))
+#     Ti = C > Cy ? T : T * -1
+#     VP = ema(Ti, len)
+#     TP = ema(T, len)
+#     SHO= (VP / TP) * 100
+
+    pi = 3.14159
+
     sho = []
-    vt = []
     cy = []
+    cby = []
+    vt = []
     vy = []
-    att = []
-    tt = []
+    at = []
+    a = []
+    t = []
     ti = []
     vp = []
     tp = []
@@ -497,31 +538,42 @@ def simple_harmonic_oscillator(data, length):
     for i, _ in enumerate(data):
         if i < length:
             sho.append(0)
-            vt.append(0)
             cy.append(0)
+            cby.append(0)
+            vt.append(0)
             vy.append(0)
-            att.append(0)
-            tt.append(0)
+            at.append(0)
+            a.append(1)
+            t.append(0)
             ti.append(0)
             vp.append(0)
             tp.append(0)
         else:
             cy.append(data[i - 1])
+            cby.append(data[i - 2])
             vt.append(data[i] - cy[i])
-            vy.append(vt[i - 1])
-            att.append(vt[i] - vy[i])
-            em = ema(att, length)[-1]
-            tt.append(math.sqrt(abs(vt[i] / em)))
+            vy.append(cy[i] - cby[i])
+            at.append(vt[i] - vy[i])
+            e1 = ema(at, length)[-1]
+            if e1 == 0:
+                a.append(1)
+            else:
+                a.append(e1)
+            t.append(2 * pi * (math.sqrt(abs(vt[i] / a[i]))))
 
             if data[i] > cy[i]:
-                ti.append(tt[i])
+                ti.append(t[i])
             else:
-                ti.append(-tt[i])
+                ti.append(-t[i])
 
             vp.append(ema(ti, length)[-1])
-            tp.append(ema(tt, length)[-1])
+            e2 = ema(t, length)[-1]
+            if e2 == 0:
+                tp.append(1)
+            else:
+                tp.append(e2)
 
-            sho.append(vp[i] / tp[i] * 100)
+            sho.append((vp[i] / tp[i]) * 100)
     return sho
 
 def simple_harmonic_index(data, length):

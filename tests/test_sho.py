@@ -6,7 +6,7 @@ SYMBOL = "BTCUSDT"
 INTERVAL = "1h"
 PARAMS = {"symbol":SYMBOL, "interval":INTERVAL}
 
-def test_simple_harmonic_index():
+def test_simple_harmonic_oscillator():
     response = requests.get(url=BINANCE_URL, params=PARAMS)
     data = response.json()
     close = [float(d[4]) for d in data]
