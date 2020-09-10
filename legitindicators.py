@@ -562,7 +562,6 @@ def simple_harmonic_oscillator(data, length):
             sho.append((vp[i] / tp[i]) * 100)
     return sho
 
-def simple_harmonic_index(data, length):
     shi = []
     vt = []
     cy = []
@@ -595,3 +594,26 @@ def simple_harmonic_index(data, length):
             
             shi.append(ema(ti,length)[-1])
     return shi
+
+def kama(data, length):
+    ama = []
+    vnoise = []
+
+    fastnd = 0.666
+    slownd = 0.0645
+
+    for i, _ in enumerate(data):
+        if i < length:
+            ama.append(0)
+            vnoise.append(0)
+        else:
+            vnoise.append(abs(data[i] - data[i - 1]))
+            signal = abs(data[i] - data[i - length])
+            tvnoise = vnoise[-length:]
+            noise = sum(tvnoise)
+            efratio = 0
+            if tvnoise != 0:
+                efratio = signal / noise
+            smooth = math.pow(efratio * (fastnd - slownd) + slownd, 2)
+            ama.append(ama[i - 1] + smooth * (data[i] - ama[i - 1]))
+    return ama
