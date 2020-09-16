@@ -617,3 +617,16 @@ def kama(data, length):
             smooth = math.pow(efratio * (fastnd - slownd) + slownd, 2)
             ama.append(ama[i - 1] + smooth * (data[i] - ama[i - 1]))
     return ama
+
+def double_decycler(data, length, delay):
+    dec = decycler(data, length)
+    ddec = []
+
+    for i, _ in enumerate(dec):
+        if i < delay:
+            ddec.append(0)
+        else:
+            diff = dec[i] - dec[i - delay]
+            ddec.append(diff)
+
+    return ddec
