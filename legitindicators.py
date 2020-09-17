@@ -1,7 +1,7 @@
 """legitindicators"""
 import math
 import numpy as np
-
+from scipy import stats
 
 def sma(data, length):
     """Simple Moving Average
@@ -630,3 +630,30 @@ def double_decycler(data, length, delay):
             ddec.append(diff)
 
     return ddec
+
+def linreg_curve(data, length):
+    x = range(0, length)
+    
+    lr = []
+    for i, _ in enumerate(data):
+        if i < length:
+            lr.append(0)
+        else:
+            y = data[i - length:i]
+            slope, intercept, _, _, _ = stats.linregress(x, y)
+            lr.append(intercept + slope * (length - 1))
+    return lr
+
+def linreg_slope(data, length):
+    lr = linreg_curve(data, length)
+
+    data.pop()
+    data.insert(0, 0)
+
+    lr_prev = linreg_curve(data, length)
+
+    slope = []
+    for i, _ in enumerate(lr):
+        slope.append((lr[i] - lr_prev[i]) / length)
+
+    return slope
