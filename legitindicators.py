@@ -657,3 +657,27 @@ def linreg_slope(data, length):
         slope.append((lr[i] - lr_prev[i]) / length)
 
     return slope
+
+def trendflex(data, length):
+    ssf = super_smoother(data, length / 2)
+
+    tf = []
+    ms = []
+    sums = []
+    for i, _ in enumerate(ssf):
+        if i < length:
+            tf.append(0)
+            ms.append(0)
+            sums.append(0)
+        else:
+            sum = 0
+            for t in range(1, length + 1):
+                sum = sum + ssf[i] - ssf[i - t]
+            sum = sum / length
+            sums.append(sum)
+
+            ms.append(0.04 * sums[i] * sums[i] + 0.96 * ms[i - 1])
+            if ms[i] != 0:
+                tf.append(round(sums[i] / math.sqrt(ms[i]), 2))
+
+    return tf
