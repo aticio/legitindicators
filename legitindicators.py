@@ -681,3 +681,20 @@ def trendflex(data, length):
                 tf.append(round(sums[i] / math.sqrt(ms[i]), 2))
 
     return tf
+
+def agc(data):
+    real = []
+    peak = []
+    for i, _ in enumerate(data):
+        if i < 1:
+            real.append(0)
+            peak.append(.0000001)
+        else:
+            peak.append(0.991 * peak[i - 1])
+            if abs(data[i]) > peak[i]:
+                peak[i] = abs(data[i])
+
+            if peak[i] != 0:
+                real.append(data[i] / peak[i])
+
+    return real
