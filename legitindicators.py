@@ -698,3 +698,43 @@ def agc(data):
                 real.append(data[i] / peak[i])
 
     return real
+
+def smoothed_ssl(data, length):
+    high = []
+    low = []
+    close = []
+
+    for i, _ in enumerate(data):
+        high.append(data[i][0])
+        low.append(data[i][1])
+        close.append(data[i][2])
+
+    s_high = super_smoother(high, length)
+    s_low = super_smoother(low, length)
+
+    hlv = []
+    ssl_up = []
+    ssl_down = []
+
+    for i, _ in enumerate(close):
+        if i < 1:
+            hlv.append(.00000001)
+            ssl_up.append(0)
+            ssl_down.append(0)
+        else:
+            if close[i] > s_high[i]:
+                hlv.append(1)
+            else:
+                if close[i] < s_low[i]:
+                    hlv.append(-1)
+                else:
+                    hlv.append(hlv[i - 1])
+
+            if hlv[i] < 0:
+                ssl_down.append(s_high[i])
+                ssl_up.append(s_low[i])
+            else:
+                ssl_down.append(s_low[i])
+                ssl_up.append(s_high[i])
+
+    return ssl_up, ssl_down
