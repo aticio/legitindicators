@@ -2,6 +2,7 @@
 import math
 import numpy as np
 from scipy import stats
+import statistics
 
 def sma(data, length):
     """Simple Moving Average
@@ -738,3 +739,24 @@ def smoothed_ssl(data, length):
                 ssl_up.append(s_high[i])
 
     return ssl_up, ssl_down
+
+def bollinger_bands_pb(data, length, stdd):
+    dev = []
+    upper = []
+    lower = []
+    bbr = []
+    basis = sma(data, length)
+
+    for i, _ in enumerate(data):
+        if i < length:
+            dev.append(0)
+            upper.append(0)
+            lower.append(0)
+            bbr.append(0)
+        else:
+            tmp = data[i - length:i]
+            dev.append(stdd * statistics.stdev(tmp))
+            upper.append(basis[i] + dev[i])
+            lower.append(basis[i] - dev[i])
+            bbr.append((data[i] - lower[i]) / (upper[i] - lower[i]))
+    return bbr
