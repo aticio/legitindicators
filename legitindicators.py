@@ -563,38 +563,61 @@ def simple_harmonic_oscillator(data, length):
             sho.append((vp[i] / tp[i]) * 100)
     return sho
 
-    shi = []
-    vt = []
+def smoothed_simple_harmonic_oscillator(data, length):
+    pi = 3.14159
+
+    ssho = []
     cy = []
+    cby = []
+    vt = []
     vy = []
-    att = []
-    tt = []
+    at = []
+    a = []
+    t = []
     ti = []
+    vp = []
+    tp = []
 
     for i, _ in enumerate(data):
         if i < length:
-            shi.append(0)
-            vt.append(0)
+            ssho.append(0)
             cy.append(0)
+            cby.append(0)
+            vt.append(0)
             vy.append(0)
-            att.append(0)
-            tt.append(0)
+            at.append(0)
+            a.append(1)
+            t.append(0)
             ti.append(0)
+            vp.append(0)
+            tp.append(0)
         else:
             cy.append(data[i - 1])
+            cby.append(data[i - 2])
             vt.append(data[i] - cy[i])
-            vy.append(vt[i - 1])
-            att.append(vt[i] - vy[i])
-            em = ema(att, length)[-1]
-            tt.append(math.sqrt(abs(vt[i] / em)))
+            vy.append(cy[i] - cby[i])
+            at.append(vt[i] - vy[i])
+            e1 = super_smoother(at, length)[-1]
+            if e1 == 0:
+                a.append(1)
+            else:
+                a.append(e1)
+            t.append(2 * pi * (math.sqrt(abs(vt[i] / a[i]))))
 
             if data[i] > cy[i]:
-                ti.append(tt[i])
+                ti.append(t[i])
             else:
-                ti.append(-tt[i])
-            
-            shi.append(ema(ti,length)[-1])
-    return shi
+                ti.append(-t[i])
+
+            vp.append(super_smoother(ti, length)[-1])
+            e2 = super_smoother(t, length)[-1]
+            if e2 == 0:
+                tp.append(1)
+            else:
+                tp.append(e2)
+
+            ssho.append((vp[i] / tp[i]) * 100)
+    return ssho
 
 def kama(data, length):
     ama = []

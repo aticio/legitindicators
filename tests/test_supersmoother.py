@@ -10,6 +10,6 @@ def test_supersmoother():
     response = requests.get(url=BINANCE_URL, params=PARAMS)
     data = response.json()
     close = [float(d[4]) for d in data]
-    ssf = super_smoother(close,10)
+    ssf = super_smoother(close,14)
     print(ssf)
     assert len(ssf) == len(close)
