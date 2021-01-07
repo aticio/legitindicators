@@ -706,6 +706,30 @@ def trendflex(data, length):
 
     return tf
 
+def custom_trendflex(data, length, s_length):
+    ssf = super_smoother(data, s_length)
+
+    tf = []
+    ms = []
+    sums = []
+    for i, _ in enumerate(ssf):
+        if i < length:
+            tf.append(0)
+            ms.append(0)
+            sums.append(0)
+        else:
+            sum = 0
+            for t in range(1, length + 1):
+                sum = sum + ssf[i] - ssf[i - t]
+            sum = sum / length
+            sums.append(sum)
+
+            ms.append(0.04 * sums[i] * sums[i] + 0.96 * ms[i - 1])
+            if ms[i] != 0:
+                tf.append(round(sums[i] / math.sqrt(ms[i]), 2))
+
+    return tf
+
 def agc(data):
     real = []
     peak = []
@@ -783,3 +807,26 @@ def bollinger_bands_pb(data, length, stdd):
             lower.append(basis[i] - dev[i])
             bbr.append((data[i] - lower[i]) / (upper[i] - lower[i]))
     return bbr
+
+def noise_elemination_tech(data, length):
+    net = []
+    denom = []
+
+    for i, _ in enumerate(data):
+        denom.append(length * (length - 1) / 2)
+        n = 0
+
+        for i in range(1, length - 1):
+            for k in range(0, i - 1):
+                sign = 0
+                if (data[i] - data[k]) == 0:
+                    sign = 0
+                elif (data[i] - data[k]) > 0:
+                    sign = 1
+                elif (data[i] - data[k]) < 0:
+                    sign = -1
+
+                n = n - sign
+
+        net.append(n / denom[i])
+    return net
