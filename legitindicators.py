@@ -1,8 +1,8 @@
 """legitindicators"""
 import math
+import statistics
 import numpy as np
 from scipy import stats
-import statistics
 
 def sma(data, length):
     """Simple Moving Average
@@ -13,13 +13,13 @@ def sma(data, length):
 
     Returns:
         list -- SMA of given data
-    """ 
+    """
     res = []
     for i, _ in reversed(list(enumerate(data))):
         sum = 0
         for t in range(i - length + 1, i + 1):
             sum = sum + data[t] / length
-        res.insert(0,sum)
+        res.insert(0, sum)
     return res
 
 def ema(data, length):
@@ -104,6 +104,36 @@ def atrpips(data, length):
         atr_pips.append(atrpip)
 
     return atr_pips
+
+def atrlimit(data, length, limit, coef):
+    """Average True Range implementation with a limit for using as a volatility indicator
+
+    Arguments:
+        data {list} -- List of ohlc data [open, high, low, close]
+        length {int} -- Lookback period for atr indicator
+        limit{int} -- average limit number to be used as threashold
+        coef{float} -- threshold coefficient
+
+    Returns:
+        list -- List of ones and zeros to be used as volatility indicator
+    """
+    atrl = []
+    th = []
+
+    avgtr = atr(data, length)
+    for i, _ in enumerate(data):
+        if  i < limit:
+            th.append(0)
+        else:
+            mean = statistics.mean(avgtr[i - limit:i + 1])
+            th.append(mean * coef)
+
+    for t, _ in enumerate(avgtr):
+        if avgtr[t] >= th[t]:
+            atrl.append(1)
+        else:
+            atrl.append(0)
+    return atrl
 
 def roofing_filter(data, hp_length, ss_length):
     """Python implementation of the Roofing Filter indicator created by John Ehlers
