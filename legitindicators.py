@@ -149,6 +149,36 @@ def atrlimit(data, length, limit, coef):
             atrl.append(0)
     return atrl
 
+def smoothed_atrlimit(data, length, limit, coef):
+    """Smoothed Average True Range implementation with a limit for using as a volatility indicator
+
+    Arguments:
+        data {list} -- List of ohlc data [open, high, low, close]
+        length {int} -- Lookback period for atr indicator
+        limit{int} -- average limit number to be used as threashold
+        coef{float} -- threshold coefficient
+
+    Returns:
+        list -- List of ones and zeros to be used as volatility indicator
+    """
+    atrl = []
+    th = []
+
+    avgtr = smoothed_atr(data, length)
+    for i, _ in enumerate(data):
+        if  i < limit:
+            th.append(0)
+        else:
+            mean = statistics.mean(avgtr[i - limit:i + 1])
+            th.append(mean * coef)
+
+    for t, _ in enumerate(avgtr):
+        if avgtr[t] >= th[t]:
+            atrl.append(1)
+        else:
+            atrl.append(0)
+    return atrl
+
 def roofing_filter(data, hp_length, ss_length):
     """Python implementation of the Roofing Filter indicator created by John Ehlers
 
