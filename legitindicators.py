@@ -57,6 +57,20 @@ def atr(data, length):
     res = rma(trng, length)
     return res
 
+def smoothed_atr(data, length):
+    """Average True Range indicator smoothed with super smoother
+
+    Arguments:
+        data {list} -- List of ohlc data [open, high, low, close]
+        length {int} -- Lookback period for atr indicator
+
+    Returns:
+        list -- Smoothed ATR of given ohlc data
+    """
+    trng = true_range(data)
+    res = super_smoother(trng, length)
+    return res
+
 def rma(data, length):
     """Rolled moving average
 
