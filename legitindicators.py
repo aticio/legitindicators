@@ -119,14 +119,13 @@ def atrpips(data, length):
 
     return atr_pips
 
-def atrlimit(data, length, limit, coef):
+def atrlimit(data, length, ss_length):
     """Average True Range implementation with a limit for using as a volatility indicator
 
     Arguments:
         data {list} -- List of ohlc data [open, high, low, close]
         length {int} -- Lookback period for atr indicator
-        limit{int} -- average limit number to be used as threashold
-        coef{float} -- threshold coefficient
+        ss_length{int} -- super smoother length to be used as threashold
 
     Returns:
         list -- List of ones and zeros to be used as volatility indicator
@@ -135,15 +134,10 @@ def atrlimit(data, length, limit, coef):
     th = []
 
     avgtr = atr(data, length)
-    for i, _ in enumerate(data):
-        if  i < limit:
-            th.append(0)
-        else:
-            mean = statistics.mean(avgtr[i - limit:i + 1])
-            th.append(mean * coef)
+    s_avgtr = super_smoother(avgtr, ss_length)
 
     for t, _ in enumerate(avgtr):
-        if avgtr[t] >= th[t]:
+        if avgtr[t] >= s_avgtr[t]:
             atrl.append(1)
         else:
             atrl.append(0)

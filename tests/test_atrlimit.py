@@ -18,6 +18,6 @@ def test_atr():
     for i in range(0, len(data)):
         ohlc = [open[i], high[i], low[i], close[i]]
         input_data.append(ohlc)
-    a = atrlimit(input_data,14, 14, 1.1)
+    a = atrlimit(input_data,14, 20)
     print(a)
     assert len(a) == len(close)
