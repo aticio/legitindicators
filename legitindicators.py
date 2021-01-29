@@ -904,3 +904,19 @@ def noise_elemination_tech(data, length):
 
         net.append(n / denom[i])
     return net
+
+def volume_heat(data, ma_length):
+    vh = []
+
+    for i, _ in enumerate(data):
+        if i < ma_length:
+            vh.append(0)
+        else:
+            mean = statistics.mean(data[i - ma_length:i + 1])
+            std = statistics.stdev(data[i - ma_length:i + 1])
+
+            if (data[i] - mean) / std > 1:
+                vh.append(1)
+            else:
+                vh.append(0)
+    return vh
