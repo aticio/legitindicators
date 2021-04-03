@@ -914,3 +914,14 @@ def volume_heat(data, ma_length):
             else:
                 vh.append(0)
     return vh
+
+def double_super_smoother(data, ssf_length1, ssf_length2):
+    ssf1 = super_smoother(data, ssf_length1)
+    ssf2 = super_smoother(data, ssf_length2)
+
+    dssf = []
+
+    for i, _ in enumerate(ssf1):
+        dssf.append(ssf1[i] - ssf2[i])
+
+    return dssf
