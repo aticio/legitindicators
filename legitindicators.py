@@ -665,7 +665,7 @@ def smoothed_simple_harmonic_oscillator(data, length):
             vt.append(data[i] - cy[i])
             vy.append(cy[i] - cby[i])
             at.append(vt[i] - vy[i])
-            e1 = super_smoother(at, length)[-1]
+            e1 = ema(at, length)[-1]
             if e1 == 0:
                 a.append(1)
             else:

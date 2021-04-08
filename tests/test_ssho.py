@@ -2,7 +2,7 @@ import requests
 from legitindicators import smoothed_simple_harmonic_oscillator
 
 BINANCE_URL = "https://api.binance.com/api/v3/klines"
-SYMBOL = "BTCUSDT"
+SYMBOL = "YFIUSDT"
 INTERVAL = "1h"
 PARAMS = {"symbol":SYMBOL, "interval":INTERVAL}
 
