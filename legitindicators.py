@@ -925,3 +925,33 @@ def double_super_smoother(data, ssf_length1, ssf_length2):
         dssf.append(ssf1[i] - ssf2[i])
 
     return dssf
+
+def ema_trailing(data, ema_length, trailing_stop_percent):
+    ts = []
+    emavg = ema(data, ema_length)
+
+    for i, e in enumerate(emavg):
+        if i < 3:
+            ts.append(0)
+        else:
+            if emavg[i] > ts[i - 1]:
+                ts_temp = emavg[i] - (emavg[i] * trailing_stop_percent)
+                if emavg[i - 1] < ts[i - 2]:
+                    ts.append(ts_temp)
+                else:
+                    if ts_temp > ts[i - 1]:
+                        ts.append(ts_temp)
+                    else:
+                        ts.append(ts[i - 1])
+            else:
+                ts_temp = emavg[i] + (emavg[i] * trailing_stop_percent)
+                if emavg[i - 1] > ts[i - 2]:
+                    ts.append(ts_temp)
+                else:
+                    if ts_temp < ts[i - 1]:
+                        ts.append(ts_temp)
+                    else:
+                        ts.append(ts[i - 1])
+    return (emavg, ts)
+
+
