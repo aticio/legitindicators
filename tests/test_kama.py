@@ -10,6 +10,6 @@ def test_kama():
     response = requests.get(url=BINANCE_URL, params=PARAMS)
     data = response.json()
     close = [float(d[4]) for d in data]
-    kma = kama(close,14)
+    kma = kama(close,1)
     print(kma)
     assert len(kma) == len(close)

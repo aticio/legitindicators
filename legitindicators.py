@@ -954,4 +954,25 @@ def ema_trailing(data, ema_length, trailing_stop_percent):
                         ts.append(ts[i - 1])
     return (emavg, ts)
 
+def momentum_normalized(data, length):
+    momentum = []
+    norm_mom = []
 
+    for i, _ in enumerate(data):
+        if i < length:
+            momentum.append(0)
+        else:
+            momentum.append(data[i] - data[i - length])
+
+    smoothed_momentum = super_smoother(momentum, 10)
+
+    for i, _ in enumerate(smoothed_momentum):
+        if i > 1:
+            norm_mom.append(smoothed_momentum[i] - smoothed_momentum[i - 1])
+        else:
+            norm_mom.append(0)
+
+    agc_norm_mom = agc(norm_mom)
+    cube_anm = cube_transform(agc_norm_mom)
+
+    return cube_anm
