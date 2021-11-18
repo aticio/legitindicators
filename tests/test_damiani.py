@@ -4,14 +4,15 @@ from legitindicators import damiani_volatmeter
 BINANCE_URL = "https://api.binance.com/api/v3/klines"
 SYMBOL = "BTCUSDT"
 INTERVAL = "1h"
-PARAMS = {"symbol":SYMBOL, "interval":INTERVAL}
+PARAMS = {"symbol": SYMBOL, "interval": INTERVAL}
+
 
 def test_damiani_volatmeter():
     response = requests.get(url=BINANCE_URL, params=PARAMS)
     data = response.json()
     open = [float(o[1]) for o in data]
     high = [float(h[2]) for h in data]
-    low = [float(l[3]) for l in data]
+    low = [float(lo[3]) for lo in data]
     close = [float(c[4]) for c in data]
 
     input_data = []

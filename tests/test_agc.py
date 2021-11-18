@@ -4,7 +4,8 @@ from legitindicators import decycler_oscillator, agc
 BINANCE_URL = "https://api.binance.com/api/v3/klines"
 SYMBOL = "DOGEUSDT"
 INTERVAL = "1h"
-PARAMS = {"symbol":SYMBOL, "interval":INTERVAL}
+PARAMS = {"symbol": SYMBOL, "interval": INTERVAL}
+
 
 def test_agc():
     response = requests.get(url=BINANCE_URL, params=PARAMS)

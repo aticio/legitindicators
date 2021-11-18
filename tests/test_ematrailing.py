@@ -4,7 +4,8 @@ from legitindicators import ema_trailing
 BINANCE_URL = "https://api.binance.com/api/v3/klines"
 SYMBOL = "BTCUSDT"
 INTERVAL = "1h"
-PARAMS = {"symbol":SYMBOL, "interval":INTERVAL}
+PARAMS = {"symbol": SYMBOL, "interval": INTERVAL}
+
 
 def test_ematrailing():
     response = requests.get(url=BINANCE_URL, params=PARAMS)
