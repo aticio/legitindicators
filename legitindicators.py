@@ -1,8 +1,9 @@
-"""legitindicators"""
+# flake8: noqa
 import math
 import statistics
 import numpy as np
 from scipy import stats
+
 
 def sma(data, length):
     """Simple Moving Average
@@ -21,6 +22,7 @@ def sma(data, length):
             sum = sum + data[t] / length
         res.insert(0, sum)
     return res
+
 
 def ema(data, length):
     """Exponential Moving Average
@@ -43,6 +45,7 @@ def ema(data, length):
             res.append(alpha * data[i] + (1 - alpha) * res[i - 1])
     return res
 
+
 def atr(data, length):
     """Average True Range indicator
 
@@ -57,6 +60,7 @@ def atr(data, length):
     res = rma(trng, length)
     return res
 
+
 def smoothed_atr(data, length):
     """Average True Range indicator smoothed with super smoother
 
@@ -70,6 +74,7 @@ def smoothed_atr(data, length):
     trng = true_range(data)
     res = super_smoother(trng, length)
     return res
+
 
 def rma(data, length):
     """Rolled moving average
@@ -90,34 +95,6 @@ def rma(data, length):
             romoav.append(alpha * data[i] + (1 - alpha) * romoav[i - 1])
     return romoav
 
-def atrpips(data, length):
-    """Average True Range indicator in pips
-
-    Arguments:
-        data {list} -- List of ohlc data [open, high, low, close]
-        length {int} -- Lookback period for atr indicator
-
-    Returns:
-        list -- ATR (in pips) of given ohlc data
-    """
-    atr_pips = []
-    avtr = atr(data, length)
-    close = [d[3] for d in data]
-
-    for i, _ in enumerate(avtr):
-        lclose = int(close[i])
-        ldigits = 0
-        if lclose == 0:
-            ldigits = 1
-        else:
-            ldigits = int(math.log10(lclose))+1
-        rdigits = 5 - ldigits
-        if rdigits == 0:
-            rdigits = 1
-        atrpip = avtr[i] * pow(10, rdigits)
-        atr_pips.append(atrpip)
-
-    return atr_pips
 
 def atrlimit(data, length, ss_length):
     """Average True Range implementation with a limit for using as a volatility indicator
@@ -131,7 +108,6 @@ def atrlimit(data, length, ss_length):
         list -- List of ones and zeros to be used as volatility indicator
     """
     atrl = []
-    th = []
 
     avgtr = atr(data, length)
     s_avgtr = super_smoother(avgtr, ss_length)
@@ -142,6 +118,7 @@ def atrlimit(data, length, ss_length):
         else:
             atrl.append(0)
     return atrl
+
 
 def smoothed_atrlimit(data, length, limit, coef):
     """Smoothed Average True Range implementation with a limit for using as a volatility indicator
@@ -160,7 +137,7 @@ def smoothed_atrlimit(data, length, limit, coef):
 
     avgtr = smoothed_atr(data, length)
     for i, _ in enumerate(data):
-        if  i < limit:
+        if i < limit:
             th.append(0)
         else:
             mean = statistics.mean(avgtr[i - limit:i + 1])
@@ -172,6 +149,7 @@ def smoothed_atrlimit(data, length, limit, coef):
         else:
             atrl.append(0)
     return atrl
+
 
 def roofing_filter(data, hp_length, ss_length):
     """Python implementation of the Roofing Filter indicator created by John Ehlers
@@ -194,6 +172,7 @@ def roofing_filter(data, hp_length, ss_length):
             alpha1 = (math.cos(alpha_arg) + math.sin(alpha_arg) - 1) / math.cos(alpha_arg)
             hpf.append(math.pow(1.0-alpha1/2.0, 2)*(data[i]-2*data[i-1]+data[i-2]) + 2*(1-alpha1)*hpf[i-1] - math.pow(1-alpha1, 2)*hpf[i-2])
     return super_smoother(hpf, ss_length)
+
 
 def super_smoother(data, length):
     """Python implementation of the Super Smoother indicator created by John Ehlers
@@ -218,6 +197,7 @@ def super_smoother(data, length):
             c_1 = 1 - c_2 - c_3
             ssf.append(c_1 * (data[i] + data[i-1]) / 2 + c_2 * ssf[i-1] + c_3 * ssf[i-2])
     return ssf
+
 
 def szladx(data, length):
     """A low lagging upgrade of ADX indicator.
@@ -265,8 +245,8 @@ def szladx(data, length):
                 directional_movement_minus = 0
 
             smoothed_true_range.append(smoothed_true_range[i-1] - (smoothed_true_range[i-1] / length) + trng)
-            smoothed_directional_movement_plus.append(smoothed_directional_movement_plus[i-1] - (smoothed_directional_movement_plus[i-1] / length) + directional_movement_plus)
-            smoothed_directional_movement_minus.append(smoothed_directional_movement_minus[i-1] - (smoothed_directional_movement_minus[i-1]/ length) + directional_movement_minus)
+            smoothed_directional_movement_plus.append(smoothed_directional_movement_plus[i-1] - (smoothed_directional_movement_plus[i - 1] / length) + directional_movement_plus)
+            smoothed_directional_movement_minus.append(smoothed_directional_movement_minus[i-1] - (smoothed_directional_movement_minus[i - 1] / length) + directional_movement_minus)
 
             di_plus = smoothed_directional_movement_plus[i] / smoothed_true_range[i] * 100
             di_minus = smoothed_directional_movement_minus[i] / smoothed_true_range[i] * 100
@@ -276,6 +256,7 @@ def szladx(data, length):
 
     ssf = super_smoother(szladxi, 10)
     return ssf
+
 
 def true_range(data):
     """True range
@@ -303,6 +284,7 @@ def true_range(data):
                 trng.append(val3)
     return trng
 
+
 def decycler(data, hp_length):
     """Python implementation of Simple Decycler indicator created by John Ehlers
 
@@ -328,6 +310,7 @@ def decycler(data, hp_length):
         dec.append(data[i] - hpf[i])
 
     return dec
+
 
 def decycler_oscillator(data, hp_length, k_multiplier, hp_length2, k_multiplier2):
     """Python implementation of Decycler Oscillator created by John Ehlers
@@ -370,6 +353,7 @@ def decycler_oscillator(data, hp_length, k_multiplier, hp_length2, k_multiplier2
 
     return decosc_final
 
+
 def high_pass_filter(data, hp_length, multiplier):
     """Applies high pass filter to given data
 
@@ -392,6 +376,7 @@ def high_pass_filter(data, hp_length, multiplier):
             hpf.append(math.pow(1.0-alpha1/2.0, 2)*(data[i]-2*data[i-1]+data[i-2]) + 2*(1-alpha1)*hpf[i-1] - math.pow(1-alpha1, 2)*hpf[i-2])
 
     return hpf
+
 
 def damiani_volatmeter(data, vis_atr, vis_std, sed_atr, sed_std, threshold):
     """Ptyhon implementation of Damiani Volatmeter
@@ -431,6 +416,7 @@ def damiani_volatmeter(data, vis_atr, vis_std, sed_atr, sed_std, threshold):
 
     return vol_m
 
+
 def voss(data, period, predict, bandwith):
     """Python implementation of Voss indicator created by John Ehlers
 
@@ -446,7 +432,6 @@ def voss(data, period, predict, bandwith):
     voss = []
     filt = []
     vf = []
-    sumcs = []
 
     pi = 3.14159
 
@@ -459,7 +444,7 @@ def voss(data, period, predict, bandwith):
         if i <= period or i <= 5 or i <= order:
             filt.append(0)
         else:
-            filt.append(0.5 *(1 - s1) * (data[i] - data[i - 2]) + f1 * (1 + s1) * filt[i - 1] - s1 * filt[i - 2])
+            filt.append(0.5 * (1 - s1) * (data[i] - data[i - 2]) + f1 * (1 + s1) * filt[i - 1] - s1 * filt[i - 2])
 
     for i, _ in enumerate(data):
         if i <= period or i <= 5 or i <= order:
@@ -474,6 +459,7 @@ def voss(data, period, predict, bandwith):
     for i, _ in enumerate(data):
         vf.append(voss[i] - filt[i])
     return vf
+
 
 def hurst_coefficient(data, length):
     dimen = []
@@ -527,6 +513,7 @@ def hurst_coefficient(data, length):
             hurst.append(round(2 - dimen[i], 2))
     return super_smoother(hurst, 20)
 
+
 def kaufman_er(data, length):
     ker = []
     calc = []
@@ -539,6 +526,7 @@ def kaufman_er(data, length):
             volat = sum(calc[-length:])
             ker.append(change / volat)
     return ker
+
 
 def ebsw(data, hp_length, ssf_length):
     pi = 3.14159
@@ -568,12 +556,14 @@ def ebsw(data, hp_length, ssf_length):
 
     return wave
 
+
 def cube_transform(data):
     cube = []
     for i, _ in enumerate(data):
         c = data[i]**3
         cube.append(c)
     return cube
+
 
 def simple_harmonic_oscillator(data, length):
     pi = 3.14159
@@ -631,6 +621,7 @@ def simple_harmonic_oscillator(data, length):
             sho.append((vp[i] / tp[i]) * 100)
     return sho
 
+
 def smoothed_simple_harmonic_oscillator(data, length):
     pi = 3.14159
 
@@ -687,6 +678,7 @@ def smoothed_simple_harmonic_oscillator(data, length):
             ssho.append((vp[i] / tp[i]) * 100)
     return ssho
 
+
 def kama(data, length):
     ama = []
     vnoise = []
@@ -710,6 +702,7 @@ def kama(data, length):
             ama.append(ama[i - 1] + smooth * (data[i] - ama[i - 1]))
     return ama
 
+
 def double_decycler(data, length, delay):
     dec = decycler(data, length)
     ddec = []
@@ -723,9 +716,10 @@ def double_decycler(data, length, delay):
 
     return ddec
 
+
 def linreg_curve(data, length):
     x = range(0, length)
-    
+
     lr = []
     for i, _ in enumerate(data):
         if i < length:
@@ -735,6 +729,7 @@ def linreg_curve(data, length):
             slope, intercept, _, _, _ = stats.linregress(x, y)
             lr.append(intercept + slope * (length - 1))
     return lr
+
 
 def linreg_slope(data, length):
     lr = linreg_curve(data, length)
@@ -749,6 +744,7 @@ def linreg_slope(data, length):
         slope.append((lr[i] - lr_prev[i]) / length)
 
     return slope
+
 
 def trendflex(data, length):
     ssf = super_smoother(data, length / 2)
@@ -774,6 +770,7 @@ def trendflex(data, length):
 
     return tf
 
+
 def custom_trendflex(data, length, s_length):
     ssf = super_smoother(data, s_length)
 
@@ -798,6 +795,7 @@ def custom_trendflex(data, length, s_length):
 
     return tf
 
+
 def agc(data):
     real = []
     peak = []
@@ -814,6 +812,7 @@ def agc(data):
                 real.append(data[i] / peak[i])
 
     return real
+
 
 def smoothed_ssl(data, length):
     high = []
@@ -855,6 +854,7 @@ def smoothed_ssl(data, length):
 
     return ssl_up, ssl_down
 
+
 def bollinger_bands_pb(data, length, stdd):
     dev = []
     upper = []
@@ -876,28 +876,6 @@ def bollinger_bands_pb(data, length, stdd):
             bbr.append((data[i] - lower[i]) / (upper[i] - lower[i]))
     return bbr
 
-def noise_elemination_tech(data, length):
-    net = []
-    denom = []
-
-    for i, _ in enumerate(data):
-        denom.append(length * (length - 1) / 2)
-        n = 0
-
-        for i in range(1, length - 1):
-            for k in range(0, i - 1):
-                sign = 0
-                if (data[i] - data[k]) == 0:
-                    sign = 0
-                elif (data[i] - data[k]) > 0:
-                    sign = 1
-                elif (data[i] - data[k]) < 0:
-                    sign = -1
-
-                n = n - sign
-
-        net.append(n / denom[i])
-    return net
 
 def volume_heat(data, ma_length):
     vh = []
@@ -915,6 +893,7 @@ def volume_heat(data, ma_length):
                 vh.append(0)
     return vh
 
+
 def double_super_smoother(data, ssf_length1, ssf_length2):
     ssf1 = super_smoother(data, ssf_length1)
     ssf2 = super_smoother(data, ssf_length2)
@@ -925,6 +904,7 @@ def double_super_smoother(data, ssf_length1, ssf_length2):
         dssf.append(ssf1[i] - ssf2[i])
 
     return dssf
+
 
 def ema_trailing(data, ema_length, trailing_stop_percent):
     ts = []
@@ -953,6 +933,7 @@ def ema_trailing(data, ema_length, trailing_stop_percent):
                     else:
                         ts.append(ts[i - 1])
     return (emavg, ts)
+
 
 def momentum_normalized(data, length):
     momentum = []
