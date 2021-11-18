@@ -1,7 +1,0 @@
-[MASTER]
-ignore=test_atr.py,test_atrpips.py,test_ema.py,test_rma.py,test_roofingfilter.py,test_supersmoother.py,test_szladx.py,test_truerange.py,test_decycler.py,test_decyclerosc.py,test_decycleroscv2.py,test_decycleroscv3.py,test_damiani.py,test_voss.py,test_hurst.py,setup.py
-
-[FORMAT]
-
-# Maximum number of characters on a single line.
-max-line-length=200
