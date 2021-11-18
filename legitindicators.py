@@ -77,7 +77,7 @@ def smoothed_atr(data, length):
 
 
 def rma(data, length):
-    """Rolled moving average
+    """Rolled Moving Average
 
     Parameters:
         data (list): List of price data
@@ -380,7 +380,7 @@ def high_pass_filter(data, hp_length, multiplier):
 
 
 def damiani_volatmeter(data, vis_atr, vis_std, sed_atr, sed_std, threshold):
-    """Ptyhon implementation of Damiani Volatmeter
+    """Damiani Volatmeter
 
     Args:
         data (list): List of ohlc data [open, high, low, close]
