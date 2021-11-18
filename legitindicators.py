@@ -8,12 +8,12 @@ from scipy import stats
 def sma(data, length):
     """Simple Moving Average
 
-    Arguments:
-        data {list} -- List of price data
-        length {int} -- Lookback period for ema
+    Parameters:
+        data (list): List of price data
+        length (int): Lookback period for ema
 
     Returns:
-        list -- SMA of given data
+        res (list): SMA of given data
     """
     res = []
     for i, _ in reversed(list(enumerate(data))):
@@ -27,12 +27,12 @@ def sma(data, length):
 def ema(data, length):
     """Exponential Moving Average
 
-    Arguments:
-        data {list} -- List of price data
-        length {int} -- Lookback period for ema
+    Parameters:
+        data (list): List of price data
+        length (int): Lookback period for ema
 
     Returns:
-        list -- EMA of given data
+        res (list): EMA of given data
     """
     res = []
     alpha = 2 / (length + 1)
@@ -49,12 +49,12 @@ def ema(data, length):
 def atr(data, length):
     """Average True Range indicator
 
-    Arguments:
-        data {list} -- List of ohlc data [open, high, low, close]
-        length {int} -- Lookback period for atr indicator
+    Parameters:
+        data (list): List of ohlc data [open, high, low, close]
+        length (int): Lookback period for atr indicator
 
     Returns:
-        list -- ATR of given ohlc data
+        res (list): ATR of given ohlc data
     """
     trng = true_range(data)
     res = rma(trng, length)
@@ -64,12 +64,12 @@ def atr(data, length):
 def smoothed_atr(data, length):
     """Average True Range indicator smoothed with super smoother
 
-    Arguments:
-        data {list} -- List of ohlc data [open, high, low, close]
-        length {int} -- Lookback period for atr indicator
+    Parameters:
+        data (list): List of ohlc data [open, high, low, close]
+        length (int): Lookback period for atr indicator
 
     Returns:
-        list -- Smoothed ATR of given ohlc data
+        res (list): Smoothed ATR of given ohlc data
     """
     trng = true_range(data)
     res = super_smoother(trng, length)
@@ -79,12 +79,12 @@ def smoothed_atr(data, length):
 def rma(data, length):
     """Rolled moving average
 
-    Arguments:
-        data {list} -- List of price data
-        length {int} -- Lookback period for rma
+    Parameters:
+        data (list): List of price data
+        length (int): Lookback period for rma
 
     Returns:
-        list -- RMA of given data
+        romoav (list): RMA of given data
     """
     alpha = 1 / length
     romoav = []
@@ -99,13 +99,13 @@ def rma(data, length):
 def atrlimit(data, length, ss_length):
     """Average True Range implementation with a limit for using as a volatility indicator
 
-    Arguments:
-        data {list} -- List of ohlc data [open, high, low, close]
-        length {int} -- Lookback period for atr indicator
-        ss_length{int} -- super smoother length to be used as threashold
+    Parameters:
+        data (list): List of ohlc data [open, high, low, close]
+        length (int): Lookback period for atr indicator
+        ss_length (int): Super Smoother length to be used as threashold
 
     Returns:
-        list -- List of ones and zeros to be used as volatility indicator
+        atrl (list): List of ones and zeros to be used as volatility indicator
     """
     atrl = []
 
@@ -123,14 +123,14 @@ def atrlimit(data, length, ss_length):
 def smoothed_atrlimit(data, length, limit, coef):
     """Smoothed Average True Range implementation with a limit for using as a volatility indicator
 
-    Arguments:
-        data {list} -- List of ohlc data [open, high, low, close]
-        length {int} -- Lookback period for atr indicator
-        limit{int} -- average limit number to be used as threashold
-        coef{float} -- threshold coefficient
+    Parameters:
+        data (list): List of ohlc data [open, high, low, close]
+        length (int): Lookback period for atr indicator
+        limit (int):Aaverage limit number to be used as threashold
+        coef (float): Threshold coefficient
 
     Returns:
-        list -- List of ones and zeros to be used as volatility indicator
+        atrl (list): List of ones and zeros to be used as volatility indicator
     """
     atrl = []
     th = []
@@ -154,13 +154,13 @@ def smoothed_atrlimit(data, length, limit, coef):
 def roofing_filter(data, hp_length, ss_length):
     """Python implementation of the Roofing Filter indicator created by John Ehlers
 
-    Arguments:
-        data {list} -- list of price data
-        hp_length {int} -- High Pass filter length
-        ss_length {int} -- period for super smoother
+    Parameters:
+        data (list): List of price data
+        hp_length (int): High Pass filter length
+        ss_length (int): Period for super smoother
 
     Returns:
-        list -- roofin filter applied data
+        ss (list): Roofing Filter applied data
     """
     hpf = []
 
@@ -171,18 +171,19 @@ def roofing_filter(data, hp_length, ss_length):
             alpha_arg = 2 * 3.14159 / (hp_length * 1.414)
             alpha1 = (math.cos(alpha_arg) + math.sin(alpha_arg) - 1) / math.cos(alpha_arg)
             hpf.append(math.pow(1.0-alpha1/2.0, 2)*(data[i]-2*data[i-1]+data[i-2]) + 2*(1-alpha1)*hpf[i-1] - math.pow(1-alpha1, 2)*hpf[i-2])
-    return super_smoother(hpf, ss_length)
+    ss = super_smoother(hpf, ss_length)
+    return ss
 
 
 def super_smoother(data, length):
     """Python implementation of the Super Smoother indicator created by John Ehlers
 
-    Arguments:
-        data {list} -- list of price data
-        length {int} -- period
+    Parameters:
+        data (list): List of price data
+        length (int): Period
 
     Returns:
-        list -- super smoothed price data
+        ssf (list): Super smoothed price data
     """
     ssf = []
     for i, _ in enumerate(data):
@@ -202,13 +203,13 @@ def super_smoother(data, length):
 def szladx(data, length):
     """A low lagging upgrade of ADX indicator.
 
-    Arguments:
-        data {list} -- list data consists of [high, low, close]
-        length {int} -- lookback period of adx
-        treshold {int} -- threshold line for adx
+    Parameters:
+        data (list): List data consists of [high, low, close]
+        length (int): Lookback period of adx
+        treshold (int): Threshold line for adx
 
     Returns:
-        [list] -- list of low lag adx indicator data
+        ssf (list): List of low lag adx indicator data
     """
     lag = (length - 1) / 2
     ssf = []
@@ -261,11 +262,11 @@ def szladx(data, length):
 def true_range(data):
     """True range
 
-    Arguments:
-        data {list} -- List of ohlc data [open, high, low, close]
+    Parameters:
+        data (list): List of ohlc data [open, high, low, close]
 
     Returns:
-        list -- True range of given data
+        trng (list): True range of given data
     """
     trng = []
     for i, _ in enumerate(data):
@@ -288,12 +289,12 @@ def true_range(data):
 def decycler(data, hp_length):
     """Python implementation of Simple Decycler indicator created by John Ehlers
 
-    Arguments:
-        data {list} -- list of price data
-        hp_length {int} -- high Pass filter length
+    Parameters:
+        data (list): List of price data
+        hp_length (int): High Pass filter length
 
     Returns:
-        list -- Decycler applied price data
+        dec (list): Decycler applied price data
     """
     hpf = []
 
@@ -315,15 +316,15 @@ def decycler(data, hp_length):
 def decycler_oscillator(data, hp_length, k_multiplier, hp_length2, k_multiplier2):
     """Python implementation of Decycler Oscillator created by John Ehlers
 
-    Arguments:
-        data {list} -- list of price data
-        hp_length {int} -- high pass length for first filter
-        k_multiplier {float} -- multiplier for first filter
-        hp_length2 {int} -- high pass length for second filter
-        k_multiplier2 {float} -- multiplier for second filter
+    Parameters:
+        data (list): List of price data
+        hp_length (int): High pass length for first filter
+        k_multiplier (float): Multiplier for first filter
+        hp_length2 (int): High pass length for second filter
+        k_multiplier2 (float): Multiplier for second filter
 
     Returns:
-        list -- Decycler oscillator data
+        decosc_final (list): Decycler Oscillator data
     """
     hpf = high_pass_filter(data, hp_length, 1)
 
@@ -357,13 +358,13 @@ def decycler_oscillator(data, hp_length, k_multiplier, hp_length2, k_multiplier2
 def high_pass_filter(data, hp_length, multiplier):
     """Applies high pass filter to given data
 
-    Arguments:
-        data {list} -- list of price data
-        hp_length {int} -- high pass length
-        multiplier {float} -- multiplier
+    Parameters:
+        data (list): List of price data
+        hp_length (int): High pass length
+        multiplier (float): Multiplier
 
     Returns:
-        list -- high pass filter applied price data
+        hpf (list): High pass filter applied price data
     """
     hpf = []
 
@@ -387,10 +388,10 @@ def damiani_volatmeter(data, vis_atr, vis_std, sed_atr, sed_std, threshold):
         vis_std (int): std length of viscosity
         sed_atr (int): atr length of sedimentation
         sed_std (int): std length of sedimentation
-        threshold (float): threshold
+        threshold (float): Threshold
 
     Returns:
-        list: list of damiani volatmeter data
+        vol_m (list): List of damiani volatmeter data
     """
     lag_s = 0.5
 
@@ -420,14 +421,14 @@ def damiani_volatmeter(data, vis_atr, vis_std, sed_atr, sed_std, threshold):
 def voss(data, period, predict, bandwith):
     """Python implementation of Voss indicator created by John Ehlers
 
-    Arguments:
-        data {list} -- list of price data
-        period {int} -- period
-        predict {int} -- predict
-        bandwith {float} -- bandwith
+    Parameters:
+        data (list): List of price data
+        period (int): Period
+        predict (int): Predict
+        bandwith (float): Bandwith
 
     Returns:
-        list -- Voss indicator data
+        vf (list): Voss indicator data
     """
     voss = []
     filt = []
@@ -462,6 +463,15 @@ def voss(data, period, predict, bandwith):
 
 
 def hurst_coefficient(data, length):
+    """Hurst coefficient
+
+    Parameters:
+        data (list): List of price data
+        length (int): Lookback period
+
+    Returns:
+        ss (list): Hurst coefficient value of given data
+    """
     dimen = []
     hurst = []
     n1 = []
@@ -511,10 +521,20 @@ def hurst_coefficient(data, length):
                 dimen.append(0)
 
             hurst.append(round(2 - dimen[i], 2))
-    return super_smoother(hurst, 20)
+    ss = super_smoother(hurst, 20)
+    return ss
 
 
 def kaufman_er(data, length):
+    """Kaufman Efficiency Ratio
+
+    Parameters:
+        data (list): List of price data
+        length (int): Lookback period
+
+    Returns:
+        ker (list): Kaufman Efficiency Ratio for given data
+    """
     ker = []
     calc = []
     for i, _ in enumerate(data):
@@ -529,6 +549,16 @@ def kaufman_er(data, length):
 
 
 def ebsw(data, hp_length, ssf_length):
+    """Python implementation of Even Better Sine Wave indicator created by John Ehlers
+
+    Parameters:
+        data (list): List of price data
+        hp_length (int): Period
+        ssf_length (int): Predict
+
+    Returns:
+        wave (list): Even Better Sine Wave indicator data
+    """
     pi = 3.14159
     alpha1 = (1 - math.sin(2 * pi / hp_length)) / math.cos(2 * pi / hp_length)
 
@@ -558,6 +588,14 @@ def ebsw(data, hp_length, ssf_length):
 
 
 def cube_transform(data):
+    """Python implementation of Cube Transform created by John Ehlers
+
+    Parameters:
+        data (list): List of price data
+
+    Returns:
+        cube (list): Cube Transform data
+    """
     cube = []
     for i, _ in enumerate(data):
         c = data[i]**3
@@ -566,6 +604,15 @@ def cube_transform(data):
 
 
 def simple_harmonic_oscillator(data, length):
+    """Simple Harmonic Oscillator
+
+    Parameters:
+        data (list): List of price data
+        length (int): Lookback period
+
+    Returns:
+        sho (list): Simple Harmonic Oscillator indicator data
+    """
     pi = 3.14159
 
     sho = []
@@ -623,6 +670,15 @@ def simple_harmonic_oscillator(data, length):
 
 
 def smoothed_simple_harmonic_oscillator(data, length):
+    """Smoothed Simple Harmonic Oscillator - Super Smoother applied
+
+    Parameters:
+        data (list): List of price data
+        length (int): Lookback period
+
+    Returns:
+        ssho (list): Smoothed Simple Harmonic Oscillator indicator data
+    """
     pi = 3.14159
 
     ssho = []
@@ -680,6 +736,15 @@ def smoothed_simple_harmonic_oscillator(data, length):
 
 
 def kama(data, length):
+    """Kaufman Adaptive Moving Average
+
+    Parameters:
+        data (list): List of price data
+        length (int): Lookback period
+
+    Returns:
+        ama (list): Kaufman Adaptive Moving Average indicator data
+    """
     ama = []
     vnoise = []
 
@@ -703,21 +768,16 @@ def kama(data, length):
     return ama
 
 
-def double_decycler(data, length, delay):
-    dec = decycler(data, length)
-    ddec = []
-
-    for i, _ in enumerate(dec):
-        if i < delay:
-            ddec.append(0)
-        else:
-            diff = dec[i] - dec[i - delay]
-            ddec.append(diff)
-
-    return ddec
-
-
 def linreg_curve(data, length):
+    """Linear Regression Curve
+
+    Parameters:
+        data (list): List of price data
+        length (int): Lookback period
+
+    Returns:
+        lr (list): Linear Regression Curve indicator data
+    """
     x = range(0, length)
 
     lr = []
@@ -732,6 +792,15 @@ def linreg_curve(data, length):
 
 
 def linreg_slope(data, length):
+    """Linear Regression Slope
+
+    Parameters:
+        data (list): List of price data
+        length (int): Lookback period
+
+    Returns:
+        slope (list): Linear Regression Slope indicator data
+    """
     lr = linreg_curve(data, length)
 
     data.pop()
@@ -747,6 +816,15 @@ def linreg_slope(data, length):
 
 
 def trendflex(data, length):
+    """Python implementation of TrendFlex indicator created by John Ehlers
+
+    Parameters:
+        data (list): List of price data
+        length (int): Lookback period
+
+    Returns:
+        tf (list): TrendFlex indicator data
+    """
     ssf = super_smoother(data, length / 2)
 
     tf = []
@@ -772,6 +850,16 @@ def trendflex(data, length):
 
 
 def custom_trendflex(data, length, s_length):
+    """Python implementation of TrendFlex indicator with customizable super smoother length, created by John Ehlers
+
+    Parameters:
+        data (list): List of price data
+        length (int): Lookback period
+        s_length (int): SuperSmoother lookback period
+
+    Returns:
+        tf (list): TrendFlex indicator data
+    """
     ssf = super_smoother(data, s_length)
 
     tf = []
@@ -797,6 +885,14 @@ def custom_trendflex(data, length, s_length):
 
 
 def agc(data):
+    """Python implementation of Automatic Gain Control created by John Ehlers
+
+    Parameters:
+        data (list): List of price data
+
+    Returns:
+        real (list): Automatic Gain Control data
+    """
     real = []
     peak = []
     for i, _ in enumerate(data):
@@ -815,6 +911,16 @@ def agc(data):
 
 
 def smoothed_ssl(data, length):
+    """Super Smoother Applied SSL indicator
+
+    Parameters:
+        data (list): List of price data
+        length (int): Lookback period
+
+    Returns:
+        ssl_up (list): SSL up data of indicator
+        ssl_down (list): SSL down data of indicator
+    """
     high = []
     low = []
     close = []
@@ -856,6 +962,16 @@ def smoothed_ssl(data, length):
 
 
 def bollinger_bands_pb(data, length, stdd):
+    """Bollinger Bands %B indicator
+
+    Parameters:
+        data (list): List of price data
+        length (int): Lookback period
+        stdd (float): standart deviation multiplier
+
+    Returns:
+        bbr (list): Bollinger Bands %B indicator data
+    """
     dev = []
     upper = []
     lower = []
@@ -878,6 +994,15 @@ def bollinger_bands_pb(data, length, stdd):
 
 
 def volume_heat(data, ma_length):
+    """Volume Heat - A custom volume indicator
+
+    Parameters:
+        data (list): List of volume data
+        ma_length (int): Moving average lookback period
+
+    Returns:
+        vh (list): Volume Heat indicator data
+    """
     vh = []
 
     for i, _ in enumerate(data):
@@ -895,6 +1020,16 @@ def volume_heat(data, ma_length):
 
 
 def double_super_smoother(data, ssf_length1, ssf_length2):
+    """Two Super Smoother indicators for checking line crosses
+
+    Parameters:
+        data (list): List of price data
+        ssf_length1 (int): Super smoother lookback period for first line
+        ssf_length2 (int): Super smoother lookback period for second line
+
+    Returns:
+        dssf (list): Double super smoother indicator data
+    """
     ssf1 = super_smoother(data, ssf_length1)
     ssf2 = super_smoother(data, ssf_length2)
 
@@ -907,6 +1042,17 @@ def double_super_smoother(data, ssf_length1, ssf_length2):
 
 
 def ema_trailing(data, ema_length, trailing_stop_percent):
+    """A trailing stop implementation using Exponantial Moving Average
+
+    Parameters:
+        data (list): List of price data
+        ema_length (int): Exponantial Moving Average lookback period
+        trailing_stop_percent (float): A multiplier needed to determine the distance of trailing stop from price. 
+
+    Returns:
+        emavg (list): Exponantial Moving Average indicator data
+        ts (list): Trailing stop
+    """
     ts = []
     emavg = ema(data, ema_length)
 
@@ -936,6 +1082,15 @@ def ema_trailing(data, ema_length, trailing_stop_percent):
 
 
 def momentum_normalized(data, length):
+    """Normalized Momentum Indicator - Cube Transform applied
+
+    Parameters:
+        data (list): List of price data
+        length (int): Momentum indicator lookback period
+
+    Returns:
+        cube_anm (list): Normalized Momentum indicator data
+    """
     momentum = []
     norm_mom = []
 
