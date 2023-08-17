@@ -1125,3 +1125,51 @@ def momentum_normalized(data, length):
     cube_anm = cube_transform(agc_norm_mom)
 
     return cube_anm
+
+
+def bollinger_bands_width_normalized(data, length, stdd):
+    """Normalized Bollinger Bands Width indicator
+
+    :param data: list of price data
+    :type data: list
+    :param length: lookback period
+    :type length: int
+    :param stdd: standart deviation multiplier
+    :type stdd: float
+    :return: Normalized width of bollinger bands
+    :rtype: list
+    """
+    dev = []
+    upper = []
+    lower = []
+    bbw = []
+    bbwn = []
+    basis = sma(data, length)
+
+    for i, _ in enumerate(data):
+        if i < length:
+            dev.append(0)
+            upper.append(0)
+            lower.append(0)
+            bbw.append(0)
+        else:
+            tmp = data[i - length:i]
+            dev.append(stdd * statistics.stdev(tmp))
+            upper.append(basis[i] + dev[i])
+            lower.append(basis[i] - dev[i])
+            bbw.append(((basis[i] + dev[i]) - (basis[i] - dev[i]))/basis[i])
+    
+    for i, _ in enumerate(bbw):
+        if i < length:
+            bbwn.append(0)
+        else:
+            max_val = max(bbw[i - length:i + 1])
+            min_val = min(bbw[i - length:i + 1])
+
+            if max_val == 0 and min_val == 0:
+                bbwn.append(0)
+            else:
+                bbwn.append(round((bbw[i] - min_val) / (max_val - min_val), 3))
+    
+    return bbwn
+
