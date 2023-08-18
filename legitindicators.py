@@ -1154,7 +1154,7 @@ def bollinger_bands_width_normalized(data, length, stdd):
             bbw.append(0)
         else:
             tmp = data[i - length:i]
-            dev.append(stdd * statistics.stdev(tmp))
+            dev.append(stdd * statistics.pstdev(tmp))
             upper.append(basis[i] + dev[i])
             lower.append(basis[i] - dev[i])
             bbw.append(((basis[i] + dev[i]) - (basis[i] - dev[i]))/basis[i])
