@@ -1153,18 +1153,18 @@ def bollinger_bands_width_normalized(data, length, stdd):
             lower.append(0)
             bbw.append(0)
         else:
-            tmp = data[i - length:i]
+            tmp = data[i - length + 1:i + 1]
             dev.append(stdd * statistics.pstdev(tmp))
             upper.append(basis[i] + dev[i])
             lower.append(basis[i] - dev[i])
             bbw.append(((basis[i] + dev[i]) - (basis[i] - dev[i]))/basis[i])
-    
+
     for i, _ in enumerate(bbw):
         if i < length:
             bbwn.append(0)
         else:
-            max_val = max(bbw[i - length:i + 1])
-            min_val = min(bbw[i - length:i + 1])
+            max_val = max(bbw[i - length + 1:i + 1])
+            min_val = min(bbw[i - length + 1:i + 1])
 
             if max_val == 0 and min_val == 0:
                 bbwn.append(0)
@@ -1172,4 +1172,3 @@ def bollinger_bands_width_normalized(data, length, stdd):
                 bbwn.append(round((bbw[i] - min_val) / (max_val - min_val), 3))
     
     return bbwn
-
