@@ -1,4 +1,8 @@
 # .github/workflows/publish-to-pypi.yml
+on:
+  push:
+    branches:
+      - main
 jobs:
   pypi-publish:
     name: Upload release to PyPI
