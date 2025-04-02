@@ -15,8 +15,8 @@ jobs:
         python-version: "3.x"
     - name: Install pypa/build
       run: >-
-        python 3 -m
-        pip Install
+        python3 -m
+        pip install
         build
         --user
     - name: Build a binary wheel and a source tarball
