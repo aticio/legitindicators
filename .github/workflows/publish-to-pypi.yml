@@ -20,6 +20,6 @@ jobs:
           pip install wheel twine
       - name: Build distribution
         run: |
-          python setup.py sdist bdist_wheel
+          ls -lart
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
