@@ -1172,3 +1172,85 @@ def bollinger_bands_width_normalized(data, length, stdd):
                 bbwn.append(round((bbw[i] - min_val) / (max_val - min_val), 3))
     
     return bbwn
+
+def vwap(data):
+    """Volume Weighted Average Price indicator
+
+    :param data: ist of ohlcv data [high, low, close, volume]
+    :type data: list
+    :return: Volume Weighted Average Price
+    :rtype: list
+    """
+    high = []
+    low = []
+    close = []
+    volume = []
+
+    for i, _ in enumerate(data):
+        high.append(data[i][0])
+        low.append(data[i][1])
+        close.append(data[i][2])
+        volume.append(data[i][3])
+    
+    vwap_values = []
+    means = []
+    std = []
+    std_05_pos = []
+    std_05_neg = []
+    std_1_pos = []
+    std_1_neg = []
+    std_15_pos = []
+    std_15_neg = []
+    std_2_pos = []
+    std_2_neg = []
+    std_25_pos = []
+    std_25_neg = []
+    cumulative_pv = 0.0
+    cumulative_vol = 0.0
+    cumulative_price = 0.0
+    cumulative_sq_diff = 0.0
+
+    for i in range(len(close)):
+        hlc = (high[i] + low[i] + close[i]) / 3
+        pv = hlc * volume[i]
+        
+        cumulative_pv += pv
+        cumulative_vol += volume[i]
+        vwap = cumulative_pv / cumulative_vol if cumulative_vol != 0 else 0
+        
+        vwap_values.append(vwap)
+
+        
+        cumulative_price += hlc
+        current_mean = cumulative_price / (i + 1)
+        means.append(current_mean)
+
+        if i > 0:
+            #diff = hlc - vwap_values[i-1]
+            #cumulative_sq_diff += (diff ** 2) * volume[i]
+            #current_std = math.sqrt(cumulative_sq_diff / cumulative_vol) if cumulative_vol != 0 else 0
+
+            cumulative_sq_diff += (hlc - current_mean) ** 2
+            current_std = math.sqrt(cumulative_sq_diff / i)
+
+        else:
+            current_std = 0
+            
+        std.append(current_std)
+        std_05_pos.append(vwap + 0.5 * current_std)
+        std_05_neg.append(vwap - 0.5 * current_std)
+
+        std_1_pos.append(vwap + 1 * current_std)
+        std_1_neg.append(vwap - 1 * current_std)
+
+        std_15_pos.append(vwap + 1.5 * current_std)
+        std_15_neg.append(vwap - 1.5 * current_std)
+
+        std_2_pos.append(vwap + 2 * current_std)
+        std_2_neg.append(vwap - 2 * current_std)
+
+        std_25_pos.append(vwap + 2.5 * current_std)
+        std_25_neg.append(vwap - 2.5 * current_std)
+
+    print(std_05_neg)    
+    return vwap_values, (std_05_pos, std_05_neg), (std_1_pos, std_1_neg), (std_15_pos, std_15_neg), (std_2_pos, std_2_neg), (std_25_pos, std_25_neg)

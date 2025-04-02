@@ -40,3 +40,4 @@ tests/test_trendflex.py
 tests/test_truerange.py
 tests/test_volumeheat.py
 tests/test_voss.py
+tests/test_vwap.py
